@@ -11,7 +11,7 @@ export default abstract class AbstractEntity {
     @CreateDateColumn({
         name: 'created_at',
         type: 'timestamp',
-        default: 'now()',
+        default: () => 'CURRENT_TIMESTAMP(6)',
         update: false,
         nullable: false,
     })
@@ -20,8 +20,8 @@ export default abstract class AbstractEntity {
     @UpdateDateColumn({
         name: 'updated_at',
         type: 'timestamp',
-        default: 'now()',
-        onUpdate: 'now()',
+        default: () => 'CURRENT_TIMESTAMP(6)',
+        onUpdate: 'CURRENT_TIMESTAMP(6)',
         nullable: false,
     })
     updatedAt: Date;
