@@ -1,8 +1,7 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import path from 'path';
-import { User } from 'src/modules/user/entities/user.entity';
 import { DataSource } from 'typeorm';
+import DatabaseLogger from './database-logger';
 
 /**
  * Setup default connection in the application
@@ -27,6 +26,7 @@ const defaultConnection = (config: ConfigService): TypeOrmModuleOptions => ({
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     synchronize: true,
     migrations: ['src/database/migrations/*.ts'],
+    logger: new DatabaseLogger(),
 });
 
 export const databaseProviders = [
