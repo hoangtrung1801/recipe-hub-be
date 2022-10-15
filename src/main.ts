@@ -1,11 +1,10 @@
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as compression from 'compression';
 import helmet from 'helmet';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { AppModule } from './app.module';
-import getLogLevels from './shared/getLogLevels';
+import getLogLevels from './shared/get-log-levels';
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -14,6 +13,7 @@ async function bootstrap() {
 
     app.use(helmet());
     app.use(compression());
+    app.useGlobalPipes(new ValidationPipe());
     app.enableCors();
 
     await app.listen(3000);
