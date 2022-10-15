@@ -2,6 +2,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import path from 'path';
 import { User } from 'src/modules/user/entities/user.entity';
+import { DataSource } from 'typeorm';
 
 /**
  * Setup default connection in the application
@@ -25,6 +26,7 @@ const defaultConnection = (config: ConfigService): TypeOrmModuleOptions => ({
     database: 'test-nestjs',
     entities: [__dirname + '/../**/*.entity{.ts,.js}'],
     synchronize: true,
+    migrations: ['src/database/migrations/*.ts'],
 });
 
 export const databaseProviders = [
@@ -32,5 +34,9 @@ export const databaseProviders = [
         imports: [ConfigModule],
         useFactory: defaultConnection,
         inject: [ConfigService],
+        dataSourceFactory: async (options) => {
+            const dataSource = await new DataSource(options).initialize();
+            return dataSource;
+        },
     }),
 ];
