@@ -1,3 +1,4 @@
+import { AutoMap } from '@automapper/classes';
 import {
     CreateDateColumn,
     PrimaryGeneratedColumn,
@@ -5,9 +6,11 @@ import {
 } from 'typeorm';
 
 export default abstract class AbstractEntity {
+    @AutoMap()
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
+    @AutoMap()
     @CreateDateColumn({
         name: 'created_at',
         type: 'timestamp',
@@ -17,6 +20,7 @@ export default abstract class AbstractEntity {
     })
     createdAt: Date;
 
+    @AutoMap()
     @UpdateDateColumn({
         name: 'updated_at',
         type: 'timestamp',

@@ -24,6 +24,9 @@
     "migration:generate": "npm run typeorm migration:generate -d ormconfig.ts -- -n"
   },
   "dependencies": {
+    "@automapper/classes": "^8.7.6",
+    "@automapper/core": "^8.7.6",
+    "@automapper/nestjs": "^8.7.6",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",

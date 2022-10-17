@@ -4,7 +4,8 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import * as compression from 'compression';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
-import getLogLevels from './shared/get-log-levels';
+import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import getLogLevels from './libs/get-log-levels';
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -13,10 +14,14 @@ async function bootstrap() {
 
     app.use(helmet());
     app.use(compression());
+
     app.useGlobalPipes(new ValidationPipe());
+    app.useGlobalInterceptors(new ResponseInterceptor());
+
     app.enableCors();
 
-    await app.listen(3000);
+    await app.listen(AppModule.port);
+    return AppModule.port;
 }
 bootstrap().then((port) => {
     Logger.log(`Application is running on port ${port}`);

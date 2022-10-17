@@ -1,13 +1,31 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { AutoMap } from '@automapper/classes';
+import AbstractEntity from 'src/common/abstract.entity';
+import Role from 'src/common/enums/role.enum';
+import { Column, Entity } from 'typeorm';
 
 @Entity()
-export class User {
-    @PrimaryGeneratedColumn()
-    id: number;
+export default class User extends AbstractEntity {
+    @AutoMap()
+    @Column({ unique: true })
+    username: string;
 
+    @Column()
+    @AutoMap()
+    password: string;
+
+    @AutoMap()
     @Column()
     name: string;
 
+    @AutoMap()
     @Column()
-    age: number;
+    phone: string;
+
+    @AutoMap()
+    @Column()
+    address: string;
+
+    @AutoMap(() => String)
+    @Column()
+    role: Role;
 }
