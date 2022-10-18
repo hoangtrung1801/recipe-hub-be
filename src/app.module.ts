@@ -7,6 +7,9 @@ import { UserModule } from './modules/user/user.module';
 import LogsMiddleware from './common/middlewares/logs.middleware';
 import { AutomapperModule } from '@automapper/nestjs';
 import { classes } from '@automapper/classes';
+import { AuthModule } from './modules/auth/auth.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
 @Module({
     imports: [
@@ -18,9 +21,16 @@ import { classes } from '@automapper/classes';
             strategyInitializer: classes(),
         }),
         UserModule,
+        AuthModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        {
+            provide: APP_GUARD,
+            useClass: JwtAuthGuard,
+        },
+    ],
 })
 export class AppModule implements NestModule {
     static port: number;

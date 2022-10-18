@@ -61,4 +61,26 @@ export class UserService {
         await this.userRepository.delete(id);
         return userDto;
     }
+
+    async findOneByEmail(username: string) {
+        const user: User = await this.userRepository.findOne({
+            where: {
+                username,
+            },
+        });
+        const userDto: UserResponseDto = this.mapper.map(
+            user,
+            User,
+            UserResponseDto,
+        );
+        return userDto;
+    }
+
+    async findOneByEmailHavingPassword(username: string) {
+        return this.userRepository.findOne({
+            where: {
+                username,
+            },
+        });
+    }
 }

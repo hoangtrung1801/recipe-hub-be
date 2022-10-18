@@ -14,6 +14,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/request/create-user.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
+import { Public } from 'src/common/decorators/set-metadata.decorator';
 
 @Controller('users')
 export class UserController {
@@ -24,11 +25,13 @@ export class UserController {
         return this.userService.create(createUserDto);
     }
 
+    @Public()
     @Get()
     findAll() {
         return this.userService.findAll();
     }
 
+    @Public()
     @Get(':id')
     findOne(@Param('id') id: string) {
         return this.userService.findOne(id);
