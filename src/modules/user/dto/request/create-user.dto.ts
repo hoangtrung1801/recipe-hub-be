@@ -35,6 +35,6 @@ export class CreateUserDto {
 
     @AutoMap(() => String)
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     role: Role;
 }

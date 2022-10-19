@@ -13,7 +13,7 @@ import {
     UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { Public } from 'src/common/decorators/set-metadata.decorator';
+import { Public } from 'src/common/decorators/public.decorator';
 import { RequestWithUser } from 'src/common/dto/request-with-user.dto';
 import { AuthService } from './auth.service';
 import { RegistrationDto } from './dto/request/registration.dto';

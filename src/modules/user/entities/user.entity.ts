@@ -20,15 +20,21 @@ export default class User extends AbstractEntity {
     name: string;
 
     @AutoMap()
-    @Column()
+    @Column({
+        nullable: true,
+    })
     phone: string;
 
     @AutoMap()
-    @Column()
+    @Column({
+        nullable: true,
+    })
     address: string;
 
     @AutoMap(() => String)
-    @Column()
+    @Column({
+        default: Role.User,
+    })
     role: Role;
 
     constructor(partial: Partial<User>) {

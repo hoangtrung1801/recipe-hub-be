@@ -10,7 +10,9 @@ import {
     SerializeOptions,
     UseInterceptors,
 } from '@nestjs/common';
-import { Public } from 'src/common/decorators/set-metadata.decorator';
+import { Public } from 'src/common/decorators/public.decorator';
+import { Roles } from 'src/common/decorators/roles.decorator';
+import Role from 'src/common/enums/role.enum';
 import { CreateUserDto } from './dto/request/create-user.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
 import { UserService } from './user.service';
@@ -22,11 +24,6 @@ import { UserService } from './user.service';
 })
 export class UserController {
     constructor(private readonly userService: UserService) {}
-
-    @Post()
-    create(@Body() createUserDto: CreateUserDto) {
-        return this.userService.create(createUserDto);
-    }
 
     @Public()
     @Get()
@@ -40,20 +37,20 @@ export class UserController {
         return this.userService.findOne(id);
     }
 
+    @Post()
+    @Roles(Role.Admin)
+    create(@Body() createUserDto: CreateUserDto) {
+        return this.userService.create(createUserDto);
+    }
+
     @Put(':id')
     update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
         return this.userService.update(id, updateUserDto);
     }
 
     @Delete(':id')
+    @Roles(Role.Admin)
     remove(@Param('id') id: string) {
         return this.userService.delete(id);
-    }
-
-    @Get('username/:username')
-    async findByEmail(@Param('username') username: string) {
-        const user = await this.userService.findOneByUsername(username);
-        console.log(user);
-        return user;
     }
 }
