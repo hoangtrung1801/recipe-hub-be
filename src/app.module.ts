@@ -38,9 +38,11 @@ import configurations, { IConfigration } from './common/configurations';
 })
 export class AppModule implements NestModule {
     static port: number;
+    static secretKey: string;
 
     constructor(private readonly configService: ConfigService<IConfigration>) {
         AppModule.port = this.configService.get('port');
+        AppModule.secretKey = this.configService.get('secretKey');
     }
 
     configure(consumer: MiddlewareConsumer) {

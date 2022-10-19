@@ -1,6 +1,10 @@
 import { Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { config } from 'process';
+import { AppModule } from 'src/app.module';
+import constants from 'src/common/constants';
 import { UserModule } from '../user/user.module';
 import AuthController from './auth.controller';
 import { AuthService } from './auth.service';
@@ -17,6 +21,7 @@ import { LocalStrategy } from './strategies/local.strategy';
             signOptions: {
                 expiresIn: '1d',
             },
+            secret: constants.secretKey,
         }),
     ],
     controllers: [AuthController],

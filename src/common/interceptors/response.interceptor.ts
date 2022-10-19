@@ -2,13 +2,12 @@ import {
     CallHandler,
     ExecutionContext,
     Injectable,
-    Logger,
     NestInterceptor,
 } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
 
 @Injectable()
-export class ResponseInterceptor<T> implements NestInterceptor {
+export class ResponseInterceptor implements NestInterceptor {
     intercept(
         context: ExecutionContext,
         next: CallHandler<any>,
