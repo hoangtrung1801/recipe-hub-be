@@ -10,11 +10,15 @@ import { classes } from '@automapper/classes';
 import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
+import configurations, { IConfigration } from './common/configurations';
 
 @Module({
     imports: [
         ConfigModule.forRoot({
             envFilePath: '.env',
+            isGlobal: true,
+            load: [configurations],
+            cache: true,
         }),
         DatabaseModule,
         AutomapperModule.forRoot({
@@ -35,8 +39,8 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 export class AppModule implements NestModule {
     static port: number;
 
-    constructor(private readonly configService: ConfigService) {
-        AppModule.port = configService.get('PORT');
+    constructor(private readonly configService: ConfigService<IConfigration>) {
+        AppModule.port = this.configService.get('port');
     }
 
     configure(consumer: MiddlewareConsumer) {
