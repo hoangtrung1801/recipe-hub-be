@@ -1,4 +1,5 @@
 import { AutoMap } from '@automapper/classes';
+import { Exclude } from 'class-transformer';
 import AbstractEntity from 'src/common/abstract.entity';
 import Role from 'src/common/enums/role.enum';
 import { Column, Entity } from 'typeorm';
@@ -11,6 +12,7 @@ export default class User extends AbstractEntity {
 
     @Column()
     @AutoMap()
+    @Exclude()
     password: string;
 
     @AutoMap()
@@ -28,4 +30,9 @@ export default class User extends AbstractEntity {
     @AutoMap(() => String)
     @Column()
     role: Role;
+
+    constructor(partial: Partial<User>) {
+        super();
+        Object.assign(this, partial);
+    }
 }

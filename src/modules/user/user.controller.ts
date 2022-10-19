@@ -1,22 +1,25 @@
 import {
-    Controller,
-    Get,
-    Post,
     Body,
-    Patch,
-    Param,
+    ClassSerializerInterceptor,
+    Controller,
     Delete,
-    HttpException,
-    HttpStatus,
-    HttpCode,
+    Get,
+    Param,
+    Post,
     Put,
+    SerializeOptions,
+    UseInterceptors,
 } from '@nestjs/common';
-import { UserService } from './user.service';
+import { Public } from 'src/common/decorators/set-metadata.decorator';
 import { CreateUserDto } from './dto/request/create-user.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
-import { Public } from 'src/common/decorators/set-metadata.decorator';
+import { UserService } from './user.service';
 
 @Controller('users')
+@UseInterceptors(ClassSerializerInterceptor)
+@SerializeOptions({
+    strategy: 'exposeAll',
+})
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
@@ -45,5 +48,12 @@ export class UserController {
     @Delete(':id')
     remove(@Param('id') id: string) {
         return this.userService.delete(id);
+    }
+
+    @Get('username/:username')
+    async findByEmail(@Param('username') username: string) {
+        const user = await this.userService.findOneByUsername(username);
+        console.log(user);
+        return user;
     }
 }

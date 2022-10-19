@@ -5,7 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/request/create-user.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
-import { UserResponseDto } from './dto/response/user-response.dto';
 import User from './entities/user.entity';
 
 @Injectable()
@@ -18,20 +17,23 @@ export class UserService {
         private readonly mapper: Mapper,
     ) {}
 
-    async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
+    async create(createUserDto: CreateUserDto) {
         const newUser = this.mapper.map(createUserDto, CreateUserDto, User);
         await this.userRepository.save(newUser);
+        return newUser;
 
-        const getUserDto = this.mapper.map(newUser, User, UserResponseDto);
-        return getUserDto;
+        // const getUserDto = this.mapper.map(newUser, User, UserResponseDto);
+        // return getUserDto;
     }
 
     async findAll() {
         const allUsers: User[] = await this.userRepository.find();
-        const allUsersDto = allUsers.map((user) =>
-            this.mapper.map(user, User, UserResponseDto),
-        );
-        return allUsersDto;
+        return allUsers;
+
+        // const allUsersDto = allUsers.map((user) =>
+        //     this.mapper.map(user, User, UserResponseDto),
+        // );
+        // return allUsersDto;
     }
 
     async findOne(id: string) {
@@ -40,13 +42,14 @@ export class UserService {
                 id,
             },
         });
+        return user;
 
-        const userDto: UserResponseDto = this.mapper.map(
-            user,
-            User,
-            UserResponseDto,
-        );
-        return userDto;
+        // const userDto: UserResponseDto = this.mapper.map(
+        //     user,
+        //     User,
+        //     UserResponseDto,
+        // );
+        // return userDto;
     }
 
     async update(id: string, updateUserDto: UpdateUserDto) {
@@ -57,30 +60,23 @@ export class UserService {
     }
 
     async delete(id: string) {
-        const userDto: UserResponseDto = await this.findOne(id);
+        const user = await this.findOne(id);
         await this.userRepository.delete(id);
-        return userDto;
+        return user;
     }
 
-    async findOneByEmail(username: string) {
+    async findOneByUsername(username: string) {
         const user: User = await this.userRepository.findOne({
             where: {
                 username,
             },
         });
-        const userDto: UserResponseDto = this.mapper.map(
-            user,
-            User,
-            UserResponseDto,
-        );
-        return userDto;
-    }
-
-    async findOneByEmailHavingPassword(username: string) {
-        return this.userRepository.findOne({
-            where: {
-                username,
-            },
-        });
+        return user;
+        // const userDto: UserResponseDto = this.mapper.map(
+        //     user,
+        //     User,
+        //     UserResponseDto,
+        // );
+        // return userDto;
     }
 }

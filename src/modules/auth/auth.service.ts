@@ -1,7 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
-import { UserResponseDto } from '../user/dto/response/user-response.dto';
 import User from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { RegistrationDto } from './dto/request/registration.dto';
@@ -17,9 +16,7 @@ export class AuthService {
         const hashedPassword = await bcrypt.hash(registrationDto.password, 10);
         registrationDto.password = hashedPassword;
         try {
-            const user: UserResponseDto = await this.userService.create(
-                registrationDto,
-            );
+            const user = await this.userService.create(registrationDto);
             return user;
         } catch (error) {
             throw new HttpException(error, HttpStatus.BAD_REQUEST);
@@ -28,8 +25,9 @@ export class AuthService {
 
     async validateUser(username: string, password: string) {
         try {
-            const user: User =
-                await this.userService.findOneByEmailHavingPassword(username);
+            const user: User = await this.userService.findOneByUsername(
+                username,
+            );
             await this.verifyPassword(user.password, password);
             delete user.password;
             return user;

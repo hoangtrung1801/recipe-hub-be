@@ -1,5 +1,6 @@
 import {
     Body,
+    ClassSerializerInterceptor,
     Controller,
     Get,
     HttpCode,
@@ -9,6 +10,7 @@ import {
     Request,
     Res,
     UseGuards,
+    UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Public } from 'src/common/decorators/set-metadata.decorator';
@@ -18,6 +20,7 @@ import { RegistrationDto } from './dto/request/registration.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('auth')
+@UseInterceptors(ClassSerializerInterceptor)
 export default class AuthController {
     constructor(private readonly authService: AuthService) {}
 
