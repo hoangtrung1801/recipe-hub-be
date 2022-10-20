@@ -10,6 +10,7 @@ import {
     SerializeOptions,
     UseInterceptors,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger/dist';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import Role from 'src/common/enums/role.enum';
@@ -22,6 +23,7 @@ import { UserService } from './user.service';
 @SerializeOptions({
     strategy: 'exposeAll',
 })
+@ApiTags('users')
 export class UserController {
     constructor(private readonly userService: UserService) {}
 

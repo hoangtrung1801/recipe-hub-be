@@ -1,10 +1,8 @@
-import {
-    ClassSerializerInterceptor,
-    Logger,
-    ValidationPipe,
-} from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { DocumentBuilder } from '@nestjs/swagger';
+import { SwaggerModule } from '@nestjs/swagger/dist';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
@@ -25,6 +23,14 @@ async function bootstrap() {
     app.useGlobalInterceptors(new ResponseInterceptor());
 
     app.enableCors();
+
+    const config = new DocumentBuilder()
+        .setTitle('Recipe Hub')
+        .setVersion('1.0')
+        .addCookieAuth('Authorization')
+        .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document);
 
     await app.listen(AppModule.port);
     return AppModule.port;
