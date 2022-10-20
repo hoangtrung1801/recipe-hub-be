@@ -12,6 +12,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import configurations, { IConfigration } from './common/configurations';
 import { RolesGuard } from './common/guards/roles.guard';
+import { RecipeModule } from './modules/recipe/recipe.module';
 
 @Module({
     imports: [
@@ -27,6 +28,7 @@ import { RolesGuard } from './common/guards/roles.guard';
         }),
         UserModule,
         AuthModule,
+        RecipeModule,
     ],
     controllers: [AppController],
     providers: [

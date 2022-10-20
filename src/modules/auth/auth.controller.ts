@@ -17,7 +17,6 @@ import { Response } from 'express';
 import { Public } from 'src/common/decorators/public.decorator';
 import { RequestWithUser } from 'src/common/dto/request-with-user.dto';
 import { AuthService } from './auth.service';
-import { LoginDto } from './dto/request/login.dto';
 import { RegistrationDto } from './dto/request/registration.dto';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
@@ -41,7 +40,7 @@ export default class AuthController {
     async login(
         @Req() req: RequestWithUser,
         @Res({ passthrough: true }) res: Response,
-        @Body() loginDto: LoginDto,
+        // @Body() loginDto: LoginDto,
     ) {
         const { cookie } = await this.authService.login(req.user);
         res.setHeader('Set-Cookie', cookie);
