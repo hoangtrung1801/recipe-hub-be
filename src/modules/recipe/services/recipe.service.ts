@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import User from 'src/modules/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { UpdateRecipeDto } from '../dto/request/update-recipe.dto';
-import { Star } from '../entities/star.entity';
-import Recipe from '../entities/recipe.entity';
 import Comment from '../entities/comment.entity';
+import Recipe from '../entities/recipe.entity';
+import { Star } from '../entities/star.entity';
 
 @Injectable()
 export class RecipeService {

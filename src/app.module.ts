@@ -13,6 +13,7 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import configurations, { IConfigration } from './common/configurations';
 import { RolesGuard } from './common/guards/roles.guard';
 import { RecipeModule } from './modules/recipe/recipe.module';
+import { CatalogModule } from './modules/catalog/catalog.module';
 
 @Module({
     imports: [
@@ -29,6 +30,7 @@ import { RecipeModule } from './modules/recipe/recipe.module';
         UserModule,
         AuthModule,
         RecipeModule,
+        CatalogModule,
     ],
     controllers: [AppController],
     providers: [

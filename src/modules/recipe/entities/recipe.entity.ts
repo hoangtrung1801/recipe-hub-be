@@ -1,6 +1,8 @@
 import { Type } from 'class-transformer';
 import {
     Allow,
+    ArrayMinSize,
+    IsArray,
     IsEnum,
     IsNotEmpty,
     IsString,
@@ -8,11 +10,14 @@ import {
 } from 'class-validator';
 import AbstractEntity from 'src/common/abstract.entity';
 import RecipeMode from 'src/common/dto/recipe-mode.enum';
+import Catalog from 'src/modules/catalog/entities/catalog.entity';
 import User from 'src/modules/user/entities/user.entity';
 import {
     Column,
     Entity,
     JoinColumn,
+    JoinTable,
+    ManyToMany,
     ManyToOne,
     OneToMany,
     OneToOne,
@@ -126,6 +131,13 @@ export default class Recipe extends AbstractEntity {
     @Allow()
     @Type(() => Comment)
     comments: Comment[];
+
+    @ManyToMany(() => Catalog, (catalog) => catalog.recipes)
+    @JoinTable()
+    @Type(() => Catalog)
+    @IsArray()
+    @ArrayMinSize(1)
+    catalogs: Catalog[];
 
     constructor(partial: Partial<Recipe>) {
         super();
