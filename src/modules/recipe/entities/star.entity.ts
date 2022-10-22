@@ -1,11 +1,5 @@
 import User from 'src/modules/user/entities/user.entity';
-import {
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    PrimaryColumn,
-    PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import Recipe from './recipe.entity';
 
 @Entity()
