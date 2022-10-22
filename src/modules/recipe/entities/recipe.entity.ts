@@ -1,4 +1,4 @@
-import { Expose, Type } from 'class-transformer';
+import { Type } from 'class-transformer';
 import {
     Allow,
     IsEnum,
@@ -17,12 +17,12 @@ import {
     OneToMany,
     OneToOne,
 } from 'typeorm';
-import { Star } from './star.entity';
+import Comment from './comment.entity';
 import CookTime from './cook-time.entity';
 import Ingredient from './ingredient.entity';
 import Instruction from './instruction.entity';
 import Nutrition from './nutrition.entity';
-import Comment from './comment.entity';
+import { Star } from './star.entity';
 
 @Entity()
 export default class Recipe extends AbstractEntity {
@@ -31,14 +31,12 @@ export default class Recipe extends AbstractEntity {
     })
     @IsString()
     @IsNotEmpty()
-    @Expose()
     name: string;
 
     @Column({
         nullable: false,
     })
     @IsString()
-    @Expose()
     description: string;
 
     @Column({
@@ -46,7 +44,6 @@ export default class Recipe extends AbstractEntity {
         type: 'int',
     })
     @Allow()
-    @Expose()
     numberOfStar: number;
 
     @Column({
@@ -54,7 +51,6 @@ export default class Recipe extends AbstractEntity {
         type: 'int',
     })
     @Allow()
-    @Expose()
     numberOfFork: number;
 
     @Column({
@@ -62,14 +58,12 @@ export default class Recipe extends AbstractEntity {
         enum: RecipeMode,
     })
     @IsEnum(RecipeMode)
-    @Expose()
     mode: RecipeMode;
 
     @OneToOne(() => Recipe, {})
     @JoinColumn()
     @Allow()
     @Type(() => Recipe)
-    @Expose()
     forkFrom: Recipe;
 
     @ManyToOne(() => User, (user: User) => user.recipes, {

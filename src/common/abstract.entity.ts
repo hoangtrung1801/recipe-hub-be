@@ -1,5 +1,5 @@
 import { AutoMap } from '@automapper/classes';
-import { Type } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { Allow } from 'class-validator';
 import {
     CreateDateColumn,
@@ -11,6 +11,7 @@ export default abstract class AbstractEntity {
     @AutoMap()
     @PrimaryGeneratedColumn('uuid')
     @Allow()
+    @Expose()
     id: string;
 
     @AutoMap()
@@ -23,6 +24,7 @@ export default abstract class AbstractEntity {
     })
     @Allow()
     @Type(() => Date)
+    @Expose()
     createdAt: Date;
 
     @AutoMap()
@@ -35,5 +37,6 @@ export default abstract class AbstractEntity {
     })
     @Allow()
     @Type(() => Date)
+    @Expose()
     updatedAt: Date;
 }

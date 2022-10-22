@@ -29,6 +29,15 @@ export class RecipeService {
             where: {
                 id,
             },
+            relations: {
+                forkFrom: true,
+                user: true,
+                ingredients: true,
+                instructions: true,
+                cookTime: true,
+                nutrition: true,
+                comments: true,
+            },
         });
     }
 
