@@ -37,6 +37,7 @@ export class RecipeService {
                 cookTime: true,
                 nutrition: true,
                 comments: true,
+                catalogs: true,
             },
         });
     }
@@ -66,9 +67,13 @@ export class RecipeService {
         const recipe = await this.findOne(id);
 
         // increase number of stars
-        await this.recipeRepository.update(id, {
-            numberOfStar: recipe.numberOfStar + 1,
-        });
+        await this.recipeRepository.increment(
+            {
+                id,
+            },
+            'numberOfStar',
+            1,
+        );
 
         return this.starRepository.save({
             recipeId: id,
@@ -117,9 +122,13 @@ export class RecipeService {
 
     async forkRecipe(recipe: Recipe, recipeForked: Recipe, user: User) {
         // increase number of forks of recipe forked
-        await this.recipeRepository.update(recipeForked.id, {
-            numberOfFork: recipeForked.numberOfFork + 1,
-        });
+        await this.recipeRepository.increment(
+            {
+                id: recipeForked.id,
+            },
+            'numberOfFork',
+            1,
+        );
 
         const newRecipe = await this.create(
             {
