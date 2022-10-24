@@ -11,7 +11,9 @@ export default class Changelog extends AbstractEntity {
     @IsString()
     message: string;
 
-    @ManyToOne(() => Recipe, (recipe) => recipe.changelogs)
+    @ManyToOne(() => Recipe, (recipe) => recipe.changelogs, {
+        onDelete: 'CASCADE',
+    })
     @Allow()
     @Type(() => Recipe)
     recipe: Recipe;

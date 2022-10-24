@@ -1,11 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { validate } from 'class-validator';
+import { deepCloneWithoutId } from 'src/libs/deep-clone';
+import Catalog from 'src/modules/catalog/entities/catalog.entity';
 import User from 'src/modules/user/entities/user.entity';
 import { Repository } from 'typeorm';
+import { ForkRecipeDto } from '../dto/request/fork-recipe.dto';
 import { UpdateRecipeDto } from '../dto/request/update-recipe.dto';
 import Changelog from '../entities/changelog.entity';
 import Comment from '../entities/comment.entity';
+import CookTime from '../entities/cook-time.entity';
+import Ingredient from '../entities/ingredient.entity';
 import Instruction from '../entities/instruction.entity';
+import Nutrition from '../entities/nutrition.entity';
 import Recipe from '../entities/recipe.entity';
 import { Star } from '../entities/star.entity';
 
@@ -39,22 +46,24 @@ export class RecipeService {
             },
             relations: {
                 forkFrom: true,
-                user: true,
                 ingredients: true,
-                instructions: true,
                 cookTime: true,
                 nutrition: true,
                 comments: true,
                 catalogs: true,
-                changelogs: true,
+            },
+            order: {
+                comments: {
+                    createdAt: 'ASC',
+                },
             },
         });
     }
 
     async create(recipeData: Recipe, user: User) {
         const recipe = await this.recipeRepository.save({
-            ...recipeData,
             user,
+            ...recipeData,
         });
         return recipe;
     }
@@ -74,9 +83,8 @@ export class RecipeService {
         return recipe;
     }
 
+    // Star
     async star(id: string, user: User) {
-        // const recipe = await this.findOne(id);
-
         // increase number of stars
         await this.recipeRepository.increment(
             {
@@ -93,27 +101,31 @@ export class RecipeService {
     }
 
     async getAllStars(id: string) {
-        const recipeWithStars = await this.recipeRepository.findOne({
-            where: { id },
-            relations: {
-                stars: true,
+        const stars = await this.starRepository.find({
+            where: {
+                recipe: {
+                    id,
+                },
             },
         });
-        const { stars, numberOfStar } = recipeWithStars;
         return {
-            numberOfStar,
+            numberOfStar: stars.length,
             stars,
         };
     }
 
+    // Comments
     async getAllComments(id: string) {
-        const recipeWithComments = await this.recipeRepository.findOne({
-            where: { id },
-            relations: {
-                comments: true,
+        const comments = await this.commentRepository.find({
+            where: {
+                recipe: {
+                    id,
+                },
+            },
+            order: {
+                createdAt: 'ASC',
             },
         });
-        const { comments } = recipeWithComments;
         return {
             numberOfComments: comments.length,
             comments,
@@ -121,34 +133,73 @@ export class RecipeService {
     }
 
     async createComment(id: string, comment: Comment, user: User) {
-        const recipe = await this.recipeRepository.findOne({ where: { id } });
         return this.commentRepository.save({
             ...comment,
-            recipe,
+            recipe: {
+                id,
+            },
             user,
         });
     }
 
-    async forkRecipe(recipe: Recipe, recipeForked: Recipe, user: User) {
+    // Fork recipe
+    async forkRecipe(
+        recipeId: string,
+        forkRecipeDto: ForkRecipeDto,
+        user: User,
+    ) {
         // increase number of forks of recipe forked
         await this.recipeRepository.increment(
             {
-                id: recipeForked.id,
+                id: recipeId,
             },
             'numberOfFork',
             1,
         );
 
-        const newRecipe = await this.create(
-            {
-                ...recipe,
-                forkFrom: recipeForked,
+        // *** NEED UPDATE LATER ***
+        // get original recipe (except attr id)
+        const recipe = await this.recipeRepository.findOne({
+            where: {
+                id: recipeId,
+            },
+            relations: {
+                catalogs: true,
+                changelogs: true,
+                cookTime: true,
+                ingredients: true,
+                instructions: true,
+                nutrition: true,
+            },
+        });
+
+        const newRecipe = await this.recipeRepository.create({
+            name: recipe.name,
+            description: recipe.description,
+            mode: recipe.mode,
+            catalogs: recipe.catalogs,
+            cookTime: deepCloneWithoutId<CookTime>(recipe.cookTime),
+            nutrition: deepCloneWithoutId<Nutrition>(recipe.nutrition),
+            changelogs: recipe.changelogs.map((changelog) =>
+                deepCloneWithoutId<Changelog>(changelog),
+            ),
+            ingredients: recipe.ingredients.map((ingredient) =>
+                deepCloneWithoutId<Ingredient>(ingredient),
+            ),
+            instructions: recipe.instructions.map((instruction) =>
+                deepCloneWithoutId<Instruction>(instruction),
+            ),
+            forkFrom: {
+                id: recipe.id,
             },
             user,
-        );
-        return newRecipe;
+            ...forkRecipeDto,
+        });
+
+        return this.recipeRepository.save(newRecipe);
     }
 
+    // Changelog
     async findAllChangelogs(id: string) {
         const recipe = await this.recipeRepository.findOne({
             where: {

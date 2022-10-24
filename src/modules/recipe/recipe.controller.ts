@@ -15,6 +15,7 @@ import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RequestWithUser } from 'src/common/dto/request-with-user.dto';
 import Role from 'src/common/enums/role.enum';
+import { ForkRecipeDto } from './dto/request/fork-recipe.dto';
 import { UpdateRecipeDto } from './dto/request/update-recipe.dto';
 import Changelog from './entities/changelog.entity';
 import Comment from './entities/comment.entity';
@@ -97,11 +98,10 @@ export class RecipeController {
     async forkRecipe(
         @Param('id') id: string,
         @Req() req: RequestWithUser,
-        @Body() recipe: Recipe,
+        @Body() forkRecipeDto: ForkRecipeDto,
     ) {
         const currentUser = req.user;
-        const recipeForked = await this.recipeService.findOne(id);
-        return this.recipeService.forkRecipe(recipe, recipeForked, currentUser);
+        return this.recipeService.forkRecipe(id, forkRecipeDto, currentUser);
     }
 
     @Post(':id/comments')

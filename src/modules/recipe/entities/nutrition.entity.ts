@@ -45,7 +45,9 @@ export default class Nutrition {
     @IsNumber()
     sugar: number;
 
-    @OneToOne(() => Recipe, (recipe) => recipe.nutrition)
+    @OneToOne(() => Recipe, (recipe) => recipe.nutrition, {
+        onDelete: 'CASCADE',
+    })
     @Allow()
     @Type(() => Recipe)
     recipe: Recipe;

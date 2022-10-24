@@ -3,8 +3,10 @@ import {
     Allow,
     ArrayMinSize,
     IsArray,
+    IsEmpty,
     IsEnum,
     IsNotEmpty,
+    IsOptional,
     IsString,
     ValidateNested,
 } from 'class-validator';
@@ -49,14 +51,14 @@ export default class Recipe extends AbstractEntity {
         default: 0,
         type: 'int',
     })
-    @Allow()
+    @IsEmpty()
     numberOfStar: number;
 
     @Column({
         default: 0,
         type: 'int',
     })
-    @Allow()
+    @IsEmpty()
     numberOfFork: number;
 
     @Column({
@@ -66,17 +68,17 @@ export default class Recipe extends AbstractEntity {
     @IsEnum(RecipeMode)
     mode: RecipeMode;
 
-    @OneToOne(() => Recipe, {})
-    @JoinColumn()
-    @Allow()
+    @ManyToOne(() => Recipe)
     @Type(() => Recipe)
+    @IsOptional()
+    @IsEmpty()
     forkFrom: Recipe;
 
     @ManyToOne(() => User, (user: User) => user.recipes, {
         nullable: false,
     })
     @Type(() => User)
-    @Allow()
+    @IsEmpty()
     user: User;
 
     @OneToMany(
@@ -101,6 +103,7 @@ export default class Recipe extends AbstractEntity {
     )
     @Type(() => Instruction)
     @ValidateNested({ each: true })
+    @ArrayMinSize(1)
     instructions: Instruction[];
 
     @OneToOne(() => CookTime, {
@@ -110,7 +113,6 @@ export default class Recipe extends AbstractEntity {
     @JoinColumn()
     @ValidateNested()
     @Type(() => CookTime)
-    @IsNotEmpty()
     cookTime: CookTime;
 
     @OneToOne(() => Nutrition, (nutrition) => nutrition.recipe, {
@@ -120,29 +122,33 @@ export default class Recipe extends AbstractEntity {
     @JoinColumn()
     @ValidateNested()
     @Type(() => Nutrition)
-    @IsNotEmpty()
     nutrition: Nutrition;
 
     @OneToMany(() => Star, (star) => star.recipe)
     @Allow()
     @Type(() => Star)
+    @IsEmpty()
     stars: Star[];
 
     @OneToMany(() => Comment, (comment) => comment.recipe)
     @Allow()
     @Type(() => Comment)
+    @IsEmpty()
     comments: Comment[];
 
     @ManyToMany(() => Catalog, (catalog) => catalog.recipes)
     @JoinTable()
     @Type(() => Catalog)
+    @ValidateNested({ each: true })
     @IsArray()
     @ArrayMinSize(1)
     catalogs: Catalog[];
 
-    @OneToMany(() => Changelog, (changelog) => changelog.recipe)
-    @Allow()
+    @OneToMany(() => Changelog, (changelog) => changelog.recipe, {
+        cascade: true,
+    })
     @Type(() => Changelog)
+    @IsEmpty()
     changelogs: Changelog[];
 
     constructor(partial: Partial<Recipe>) {

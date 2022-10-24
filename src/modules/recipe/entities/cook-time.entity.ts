@@ -1,5 +1,7 @@
+import { Type } from 'class-transformer';
 import { Allow, IsInt } from 'class-validator';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import Recipe from './recipe.entity';
 
 @Entity()
 export default class CookTime {
@@ -30,4 +32,11 @@ export default class CookTime {
     })
     @IsInt()
     cook: number;
+
+    @OneToOne(() => Recipe, (recipe) => recipe.cookTime, {
+        onDelete: 'CASCADE',
+    })
+    @Allow()
+    @Type(() => Recipe)
+    recipe: Recipe;
 }

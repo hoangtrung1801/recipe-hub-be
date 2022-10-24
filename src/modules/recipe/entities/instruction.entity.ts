@@ -8,6 +8,7 @@ import Recipe from './recipe.entity';
 export default class Instruction extends AbstractEntity {
     @ManyToOne(() => Recipe, (recipe: Recipe) => recipe.instructions, {
         nullable: false,
+        onDelete: 'CASCADE',
     })
     @Type(() => Recipe)
     @Allow()

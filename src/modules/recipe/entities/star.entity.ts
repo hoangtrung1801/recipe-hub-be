@@ -4,7 +4,9 @@ import Recipe from './recipe.entity';
 
 @Entity()
 export class Star {
-    @ManyToOne(() => Recipe, (recipe) => recipe.stars)
+    @ManyToOne(() => Recipe, (recipe) => recipe.stars, {
+        onDelete: 'CASCADE',
+    })
     @JoinColumn({ name: 'recipeId' })
     recipe: Recipe;
 

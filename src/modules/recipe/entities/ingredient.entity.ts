@@ -18,6 +18,7 @@ export default class Ingredient {
 
     @ManyToOne(() => Recipe, (recipe: Recipe) => recipe.ingredients, {
         nullable: false,
+        onDelete: 'CASCADE',
     })
     @Type(() => Recipe)
     @ValidateNested()
