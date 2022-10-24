@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { validate } from 'class-validator';
 import { deepCloneWithoutId } from 'src/libs/deep-clone';
-import Catalog from 'src/modules/catalog/entities/catalog.entity';
 import User from 'src/modules/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { ForkRecipeDto } from '../dto/request/fork-recipe.dto';
