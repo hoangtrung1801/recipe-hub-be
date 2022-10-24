@@ -16,6 +16,7 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { RequestWithUser } from 'src/common/dto/request-with-user.dto';
 import Role from 'src/common/enums/role.enum';
 import { UpdateRecipeDto } from './dto/request/update-recipe.dto';
+import Changelog from './entities/changelog.entity';
 import Comment from './entities/comment.entity';
 import Recipe from './entities/recipe.entity';
 import { IngredientService } from './services/ingredient.service';
@@ -44,23 +45,46 @@ export class RecipeController {
         return this.recipeService.findOne(id);
     }
 
+    @Get(':id/stars')
+    @Public()
+    getAllStars(@Param('id') id: string) {
+        return this.recipeService.getAllStars(id);
+    }
+
+    @Get(':id/comments')
+    @Public()
+    getAllComments(@Param('id') id: string) {
+        return this.recipeService.getAllComments(id);
+    }
+
+    @Get(':id/changelogs')
+    getAllChangelogs(@Param('id') id: string) {
+        return this.recipeService.findAllChangelogs(id);
+    }
+
+    @Get(':id/changelog')
+    getCurrentChangelog(@Param('id') id: string) {
+        return this.recipeService.getCurrentChangelog(id);
+    }
+
+    @Get(':id/changelogs/:changelogId')
+    getChangelog(
+        @Param('id') id: string,
+        @Param('changelogId') changelogId: string,
+    ) {
+        return this.recipeService.findChangelogById(id, changelogId);
+    }
+
+    @Get(':id/instructions')
+    getInstructions(@Param('id') id: string) {
+        return this.recipeService.getCurrentInstructions(id);
+    }
+
     @Post()
     @Roles(Role.Admin, Role.User)
     create(@Body() recipe: Recipe, @Req() req: RequestWithUser) {
         const currentUser = req.user;
         return this.recipeService.create(recipe, currentUser);
-    }
-
-    @Put(':id')
-    @Roles(Role.Admin, Role.User)
-    update(@Param('id') id: string, @Body() recipe: UpdateRecipeDto) {
-        return this.recipeService.update(id, recipe);
-    }
-
-    @Delete(':id')
-    @Roles(Role.Admin, Role.User)
-    delete(@Param('id') id: string) {
-        return this.recipeService.delete(id);
     }
 
     @Post(':id/stars')
@@ -90,15 +114,20 @@ export class RecipeController {
         return this.recipeService.createComment(id, comment, currentUser);
     }
 
-    @Get(':id/stars')
-    @Public()
-    getAllStars(@Param('id') id: string) {
-        return this.recipeService.getAllStars(id);
+    @Post(':id/changelogs')
+    createChangelog(@Param('id') id: string, @Body() changelog: Changelog) {
+        return this.recipeService.createChangelog(id, changelog);
     }
 
-    @Get(':id/comments')
-    @Public()
-    getAllComments(@Param('id') id: string) {
-        return this.recipeService.getAllComments(id);
+    @Put(':id')
+    @Roles(Role.Admin, Role.User)
+    update(@Param('id') id: string, @Body() recipe: UpdateRecipeDto) {
+        return this.recipeService.update(id, recipe);
+    }
+
+    @Delete(':id')
+    @Roles(Role.Admin, Role.User)
+    delete(@Param('id') id: string) {
+        return this.recipeService.delete(id);
     }
 }

@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import User from 'src/modules/user/entities/user.entity';
 import { Repository } from 'typeorm';
 import { UpdateRecipeDto } from '../dto/request/update-recipe.dto';
+import Changelog from '../entities/changelog.entity';
 import Comment from '../entities/comment.entity';
+import Instruction from '../entities/instruction.entity';
 import Recipe from '../entities/recipe.entity';
 import { Star } from '../entities/star.entity';
 
@@ -18,6 +20,12 @@ export class RecipeService {
 
         @InjectRepository(Comment)
         private readonly commentRepository: Repository<Comment>,
+
+        @InjectRepository(Changelog)
+        private readonly changelogRepository: Repository<Changelog>,
+
+        @InjectRepository(Instruction)
+        private readonly instructionRepository: Repository<Instruction>,
     ) {}
 
     async findAll() {
@@ -38,6 +46,7 @@ export class RecipeService {
                 nutrition: true,
                 comments: true,
                 catalogs: true,
+                changelogs: true,
             },
         });
     }
@@ -54,17 +63,19 @@ export class RecipeService {
         await this.recipeRepository.update(id, {
             ...updateRecipeDto,
         });
-        return this.findOne(id);
+        return this.recipeRepository.findOne({
+            where: { id },
+        });
     }
 
     async delete(id: string) {
-        const recipe = this.findOne(id);
+        const recipe = this.recipeRepository.findOne({ where: { id } });
         await this.recipeRepository.delete(id);
         return recipe;
     }
 
     async star(id: string, user: User) {
-        const recipe = await this.findOne(id);
+        // const recipe = await this.findOne(id);
 
         // increase number of stars
         await this.recipeRepository.increment(
@@ -78,8 +89,6 @@ export class RecipeService {
         return this.starRepository.save({
             recipeId: id,
             userId: user.id,
-            // recipeId: id,
-            // userId: user.id,
         });
     }
 
@@ -112,7 +121,7 @@ export class RecipeService {
     }
 
     async createComment(id: string, comment: Comment, user: User) {
-        const recipe = await this.findOne(id);
+        const recipe = await this.recipeRepository.findOne({ where: { id } });
         return this.commentRepository.save({
             ...comment,
             recipe,
@@ -138,5 +147,126 @@ export class RecipeService {
             user,
         );
         return newRecipe;
+    }
+
+    async findAllChangelogs(id: string) {
+        const recipe = await this.recipeRepository.findOne({
+            where: {
+                id,
+            },
+            relations: {
+                changelogs: true,
+            },
+        });
+        return recipe.changelogs;
+    }
+
+    async findChangelogById(recipeId: string, changelogId: string) {
+        const changelog = await this.changelogRepository.findOne({
+            where: {
+                id: changelogId,
+            },
+        });
+        const instrucionsInChangelog = await this.getInstructionsInChangelog(
+            recipeId,
+            changelog.id,
+        );
+
+        return {
+            ...changelog,
+            instructions: instrucionsInChangelog,
+        } as Changelog;
+    }
+
+    async createChangelog(id: string, changelog: Changelog) {
+        const { instructions } = changelog;
+
+        // Save all instructions when creating changelog
+        // <==> CASADE
+        await this.instructionRepository.save(
+            instructions.map((instruction) => ({
+                ...instruction,
+                recipe: {
+                    id,
+                },
+            })),
+        );
+
+        return this.changelogRepository.save({
+            ...changelog,
+            recipe: {
+                id,
+            },
+        });
+    }
+
+    async getCurrentChangelog(id: string) {
+        const changelog = await this.changelogRepository.findOne({
+            where: {
+                recipe: {
+                    id,
+                },
+            },
+            order: {
+                createdAt: 'DESC',
+            },
+        });
+
+        return {
+            ...changelog,
+            instructions: await this.getInstructionsInChangelog(
+                id,
+                changelog.id,
+            ),
+        } as Changelog;
+    }
+
+    async getCurrentInstructions(id: string) {
+        const changelog = await this.changelogRepository.findOne({
+            where: {
+                recipe: {
+                    id,
+                },
+            },
+            order: {
+                createdAt: 'DESC',
+            },
+        });
+        return this.getInstructionsInChangelog(id, changelog.id);
+    }
+
+    async getInstructionsInChangelog(recipeId: string, changelogId: string) {
+        const changelog = await this.changelogRepository.findOne({
+            where: {
+                id: changelogId,
+            },
+        });
+
+        const instructions = await this.instructionRepository.find({
+            where: {
+                recipe: {
+                    id: recipeId,
+                },
+            },
+            order: {
+                stepNo: 'ASC',
+                createdAt: 'DESC',
+            },
+        });
+
+        let currentStepNo = 0;
+        return instructions
+            .map((instruction) => {
+                if (instruction.stepNo <= currentStepNo) return null;
+                currentStepNo = instruction.stepNo;
+                return instruction;
+            })
+            .filter((instruction) => {
+                return (
+                    instruction !== null &&
+                    instruction.createdAt.getTime() <=
+                        changelog.createdAt.getTime()
+                );
+            });
     }
 }

@@ -22,6 +22,7 @@ import {
     OneToMany,
     OneToOne,
 } from 'typeorm';
+import Changelog from './changelog.entity';
 import Comment from './comment.entity';
 import CookTime from './cook-time.entity';
 import Ingredient from './ingredient.entity';
@@ -138,6 +139,11 @@ export default class Recipe extends AbstractEntity {
     @IsArray()
     @ArrayMinSize(1)
     catalogs: Catalog[];
+
+    @OneToMany(() => Changelog, (changelog) => changelog.recipe)
+    @Allow()
+    @Type(() => Changelog)
+    changelogs: Changelog[];
 
     constructor(partial: Partial<Recipe>) {
         super();
