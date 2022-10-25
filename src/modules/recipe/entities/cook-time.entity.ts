@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { Allow, IsInt } from 'class-validator';
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
@@ -13,24 +14,28 @@ export default class CookTime {
         type: 'int',
     })
     @IsInt()
+    @ApiProperty()
     total: number;
 
     @Column({
         type: 'int',
     })
     @IsInt()
+    @ApiProperty()
     prep: number;
 
     @Column({
         type: 'int',
     })
     @IsInt()
+    @ApiProperty()
     chill: number;
 
     @Column({
         type: 'int',
     })
     @IsInt()
+    @ApiProperty()
     cook: number;
 
     @OneToOne(() => Recipe, (recipe) => recipe.cookTime, {

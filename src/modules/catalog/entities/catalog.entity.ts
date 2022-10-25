@@ -1,3 +1,4 @@
+import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsArray, IsNotEmpty, IsString } from 'class-validator';
 import AbstractEntity from 'src/common/abstract.entity';
@@ -9,11 +10,13 @@ export default class Catalog extends AbstractEntity {
     @Column()
     @IsString()
     @IsNotEmpty()
+    @ApiProperty()
     name: string;
 
     @Column()
     @IsString()
     @IsNotEmpty()
+    @ApiProperty()
     description: string;
 
     @ManyToMany(() => Recipe, (recipe) => recipe.catalogs)

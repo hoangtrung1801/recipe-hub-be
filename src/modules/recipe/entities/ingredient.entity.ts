@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
     IsEnum,
@@ -26,12 +27,14 @@ export default class Ingredient {
 
     @Column()
     @IsString()
+    @ApiProperty()
     name: string;
 
     @Column({
         type: 'float',
     })
     @IsNumber()
+    @ApiProperty()
     amount: number;
 
     @Column({
@@ -39,5 +42,8 @@ export default class Ingredient {
         enum: IngredientUnit,
     })
     @IsEnum(IngredientUnit)
+    @ApiProperty({
+        enum: IngredientUnit,
+    })
     unit: IngredientUnit;
 }

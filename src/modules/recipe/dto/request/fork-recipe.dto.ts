@@ -1,18 +1,8 @@
-import { OmitType, PartialType } from '@nestjs/mapped-types';
+import { PartialType, PickType } from '@nestjs/swagger';
 import Recipe from '../../entities/recipe.entity';
 
 export class ForkRecipeDto extends PartialType(
-    OmitType(Recipe, [
-        'numberOfStar',
-        'numberOfFork',
-        'comments',
-        'id',
-        'forkFrom',
-        'user',
-        'stars',
-        'createdAt',
-        'updatedAt',
-    ]),
+    PickType(Recipe, ['name', 'description', 'mode']),
 ) {
     constructor(parital: Partial<ForkRecipeDto>) {
         super();

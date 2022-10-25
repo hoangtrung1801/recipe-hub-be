@@ -1,3 +1,8 @@
+import {
+    ApiProperty,
+    ApiRequestTimeoutResponse,
+    getSchemaPath,
+} from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
     Allow,
@@ -39,12 +44,14 @@ export default class Recipe extends AbstractEntity {
     })
     @IsString()
     @IsNotEmpty()
+    @ApiProperty()
     name: string;
 
     @Column({
         nullable: false,
     })
     @IsString()
+    @ApiProperty()
     description: string;
 
     @Column({
@@ -52,6 +59,7 @@ export default class Recipe extends AbstractEntity {
         type: 'int',
     })
     @IsEmpty()
+    @ApiProperty()
     numberOfStar: number;
 
     @Column({
@@ -59,6 +67,7 @@ export default class Recipe extends AbstractEntity {
         type: 'int',
     })
     @IsEmpty()
+    @ApiProperty()
     numberOfFork: number;
 
     @Column({
@@ -66,12 +75,18 @@ export default class Recipe extends AbstractEntity {
         enum: RecipeMode,
     })
     @IsEnum(RecipeMode)
+    @ApiProperty({
+        enum: RecipeMode,
+    })
     mode: RecipeMode;
 
     @ManyToOne(() => Recipe)
     @Type(() => Recipe)
     @IsOptional()
     @IsEmpty()
+    // @ApiProperty({
+    //     oneOf: [{ $ref: getSchemaPath(Recipe) }],
+    // })
     forkFrom: Recipe;
 
     @ManyToOne(() => User, (user: User) => user.recipes, {
@@ -79,6 +94,9 @@ export default class Recipe extends AbstractEntity {
     })
     @Type(() => User)
     @IsEmpty()
+    // @ApiProperty({
+    //     oneOf: [{ $ref: getSchemaPath(User) }],
+    // })
     user: User;
 
     @OneToMany(
@@ -92,6 +110,12 @@ export default class Recipe extends AbstractEntity {
         each: true,
     })
     @Type(() => Ingredient)
+    @ApiProperty({
+        type: 'array',
+        items: {
+            oneOf: [{ $ref: getSchemaPath(Ingredient) }],
+        },
+    })
     ingredients: Ingredient[];
 
     @OneToMany(
@@ -104,6 +128,12 @@ export default class Recipe extends AbstractEntity {
     @Type(() => Instruction)
     @ValidateNested({ each: true })
     @ArrayMinSize(1)
+    @ApiProperty({
+        type: 'array',
+        items: {
+            oneOf: [{ $ref: getSchemaPath(Instruction) }],
+        },
+    })
     instructions: Instruction[];
 
     @OneToOne(() => CookTime, {
@@ -113,6 +143,11 @@ export default class Recipe extends AbstractEntity {
     @JoinColumn()
     @ValidateNested()
     @Type(() => CookTime)
+    @ApiProperty({
+        items: {
+            oneOf: [{ $ref: getSchemaPath(CookTime) }],
+        },
+    })
     cookTime: CookTime;
 
     @OneToOne(() => Nutrition, (nutrition) => nutrition.recipe, {
@@ -122,6 +157,11 @@ export default class Recipe extends AbstractEntity {
     @JoinColumn()
     @ValidateNested()
     @Type(() => Nutrition)
+    @ApiProperty({
+        items: {
+            oneOf: [{ $ref: getSchemaPath(Nutrition) }],
+        },
+    })
     nutrition: Nutrition;
 
     @OneToMany(() => Star, (star) => star.recipe)
@@ -142,6 +182,11 @@ export default class Recipe extends AbstractEntity {
     @ValidateNested({ each: true })
     @IsArray()
     @ArrayMinSize(1)
+    @ApiProperty({
+        default: ['catalogId1', 'catalogId2'],
+        type: String,
+        isArray: true,
+    })
     catalogs: Catalog[];
 
     @OneToMany(() => Changelog, (changelog) => changelog.recipe, {

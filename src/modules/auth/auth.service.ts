@@ -50,6 +50,7 @@ export class AuthService {
 
         return {
             cookie,
+            accessToken,
         };
     }
 

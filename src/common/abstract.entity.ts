@@ -1,4 +1,3 @@
-import { AutoMap } from '@automapper/classes';
 import { Expose, Type } from 'class-transformer';
 import { Allow } from 'class-validator';
 import {
@@ -8,13 +7,11 @@ import {
 } from 'typeorm';
 
 export default abstract class AbstractEntity {
-    @AutoMap()
     @PrimaryGeneratedColumn('uuid')
     @Allow()
     @Expose()
     id: string;
 
-    @AutoMap()
     @CreateDateColumn({
         name: 'created_at',
         type: 'timestamp',
@@ -27,7 +24,6 @@ export default abstract class AbstractEntity {
     @Expose()
     createdAt: Date;
 
-    @AutoMap()
     @UpdateDateColumn({
         name: 'updated_at',
         type: 'timestamp',

@@ -9,6 +9,13 @@ import helmet from 'helmet';
 import { AppModule } from './app.module';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import getLogLevels from './libs/get-log-levels';
+import Catalog from './modules/catalog/entities/catalog.entity';
+import CookTime from './modules/recipe/entities/cook-time.entity';
+import Ingredient from './modules/recipe/entities/ingredient.entity';
+import Instruction from './modules/recipe/entities/instruction.entity';
+import Nutrition from './modules/recipe/entities/nutrition.entity';
+import Recipe from './modules/recipe/entities/recipe.entity';
+import User from './modules/user/entities/user.entity';
 
 async function bootstrap() {
     const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -27,9 +34,20 @@ async function bootstrap() {
     const config = new DocumentBuilder()
         .setTitle('Recipe Hub')
         .setVersion('1.0')
-        .addCookieAuth('Authorization')
+        // .addCookieAuth('Authorization')
+        .addBearerAuth()
         .build();
-    const document = SwaggerModule.createDocument(app, config);
+    const document = SwaggerModule.createDocument(app, config, {
+        extraModels: [
+            Recipe,
+            User,
+            Ingredient,
+            Instruction,
+            CookTime,
+            Nutrition,
+            Catalog,
+        ],
+    });
     SwaggerModule.setup('api', app, document);
 
     await app.listen(AppModule.port);

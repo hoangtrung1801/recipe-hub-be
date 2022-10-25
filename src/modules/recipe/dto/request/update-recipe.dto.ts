@@ -1,4 +1,6 @@
-import { PartialType } from '@nestjs/mapped-types';
+import { PartialType, PickType } from '@nestjs/swagger';
 import Recipe from '../../entities/recipe.entity';
 
-export class UpdateRecipeDto extends PartialType(Recipe) {}
+export class UpdateRecipeDto extends PartialType(
+    PickType(Recipe, ['name', 'description', 'mode']),
+) {}

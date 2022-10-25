@@ -1,19 +1,17 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DatabaseModule } from './database/database.module';
-import { UserModule } from './modules/user/user.module';
-import LogsMiddleware from './common/middlewares/logs.middleware';
-import { AutomapperModule } from '@automapper/nestjs';
-import { classes } from '@automapper/classes';
-import { AuthModule } from './modules/auth/auth.module';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import configurations, { IConfigration } from './common/configurations';
 import { RolesGuard } from './common/guards/roles.guard';
-import { RecipeModule } from './modules/recipe/recipe.module';
+import LogsMiddleware from './common/middlewares/logs.middleware';
+import { DatabaseModule } from './database/database.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { CatalogModule } from './modules/catalog/catalog.module';
+import { RecipeModule } from './modules/recipe/recipe.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
     imports: [
@@ -24,9 +22,6 @@ import { CatalogModule } from './modules/catalog/catalog.module';
             cache: true,
         }),
         DatabaseModule,
-        AutomapperModule.forRoot({
-            strategyInitializer: classes(),
-        }),
         UserModule,
         AuthModule,
         RecipeModule,

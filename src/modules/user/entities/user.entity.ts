@@ -1,62 +1,57 @@
-import { AutoMap } from '@automapper/classes';
+import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Type } from 'class-transformer';
-import {
-    Allow,
-    IsEnum,
-    IsPhoneNumber,
-    IsString,
-    ValidateNested,
-} from 'class-validator';
+import { Allow, IsEnum, IsPhoneNumber, IsString } from 'class-validator';
 import AbstractEntity from 'src/common/abstract.entity';
 import Role from 'src/common/enums/role.enum';
-import { Star } from 'src/modules/recipe/entities/star.entity';
 import Recipe from 'src/modules/recipe/entities/recipe.entity';
+import { Star } from 'src/modules/recipe/entities/star.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
 @Entity()
 export default class User extends AbstractEntity {
-    @AutoMap()
     @Column({ unique: true })
     @IsString()
+    @ApiProperty()
     username: string;
 
     @Column()
-    @AutoMap()
-    @Exclude()
+    @Exclude({ toPlainOnly: true })
     @IsString()
     password: string;
 
-    @AutoMap()
     @Column()
     @IsString()
+    @ApiProperty()
     name: string;
 
-    @AutoMap()
     @Column({
         nullable: true,
     })
     @IsPhoneNumber('VN')
+    @ApiProperty()
     phone: string;
 
-    @AutoMap()
     @Column({
         nullable: true,
     })
     @IsString()
+    @ApiProperty()
     address: string;
 
-    @AutoMap(() => String)
     @Column({
         type: 'enum',
         default: Role.User,
         enum: Role,
     })
     @IsEnum(Role)
+    @ApiProperty({
+        enum: Role,
+    })
     role: Role;
 
     @OneToMany(() => Recipe, (recipe: Recipe) => recipe.user)
     @Type(() => Recipe)
-    @ValidateNested({ each: true })
+    @Allow()
     recipes: Recipe[];
 
     @OneToMany(() => Star, (star) => star.recipe)

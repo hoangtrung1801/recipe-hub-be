@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { Allow, IsNumber } from 'class-validator';
 import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
@@ -13,36 +14,42 @@ export default class Nutrition {
         type: 'float',
     })
     @IsNumber()
+    @ApiProperty()
     calories: number;
 
     @Column({
         type: 'float',
     })
     @IsNumber()
+    @ApiProperty()
     protein: number;
 
     @Column({
         type: 'float',
     })
     @IsNumber()
+    @ApiProperty()
     fiber: number;
 
     @Column({
         type: 'float',
     })
     @IsNumber()
+    @ApiProperty()
     carbs: number;
 
     @Column({
         type: 'float',
     })
     @IsNumber()
+    @ApiProperty()
     fats: number;
 
     @Column({
         type: 'float',
     })
     @IsNumber()
+    @ApiProperty()
     sugar: number;
 
     @OneToOne(() => Recipe, (recipe) => recipe.nutrition, {

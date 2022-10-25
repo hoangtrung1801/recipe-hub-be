@@ -1,47 +1,14 @@
-import { AutoMap } from '@automapper/classes';
-import { ApiProperty } from '@nestjs/swagger/dist/decorators';
-import {
-    IsNotEmpty,
-    IsOptional,
-    IsPhoneNumber,
-    IsString,
-} from 'class-validator';
-import Role from 'src/common/enums/role.enum';
+import { ApiProperty, PickType } from '@nestjs/swagger';
+import User from '../../entities/user.entity';
 
-export class CreateUserDto {
-    @AutoMap()
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    username: string;
-
-    @AutoMap()
-    @IsString()
-    @IsNotEmpty()
+export class CreateUserDto extends PickType(User, [
+    'username',
+    'password',
+    'name',
+    'phone',
+    'role',
+    'address',
+]) {
     @ApiProperty()
     password: string;
-
-    @AutoMap()
-    @IsString()
-    @IsNotEmpty()
-    @ApiProperty()
-    name: string;
-
-    @AutoMap()
-    @IsPhoneNumber()
-    @IsOptional()
-    @ApiProperty()
-    phone: string;
-
-    @AutoMap()
-    @IsString()
-    @IsOptional()
-    @ApiProperty()
-    address: string;
-
-    @AutoMap(() => String)
-    @IsString()
-    @IsOptional()
-    @ApiProperty()
-    role: Role;
 }

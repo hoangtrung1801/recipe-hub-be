@@ -1,5 +1,3 @@
-import { Mapper } from '@automapper/core';
-import { InjectMapper } from '@automapper/nestjs';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,28 +10,18 @@ export class UserService {
     constructor(
         @InjectRepository(User)
         private userRepository: Repository<User>,
-
-        @InjectMapper()
-        private readonly mapper: Mapper,
     ) {}
 
     async create(createUserDto: CreateUserDto) {
-        const newUser = this.mapper.map(createUserDto, CreateUserDto, User);
-        await this.userRepository.save(newUser);
-        return newUser;
-
-        // const getUserDto = this.mapper.map(newUser, User, UserResponseDto);
-        // return getUserDto;
+        console.log(createUserDto);
+        return this.userRepository.save({
+            ...createUserDto,
+        });
     }
 
     async findAll() {
         const allUsers: User[] = await this.userRepository.find();
         return allUsers;
-
-        // const allUsersDto = allUsers.map((user) =>
-        //     this.mapper.map(user, User, UserResponseDto),
-        // );
-        // return allUsersDto;
     }
 
     async findOne(id: string) {
@@ -43,13 +31,6 @@ export class UserService {
             },
         });
         return user;
-
-        // const userDto: UserResponseDto = this.mapper.map(
-        //     user,
-        //     User,
-        //     UserResponseDto,
-        // );
-        // return userDto;
     }
 
     async update(id: string, updateUserDto: UpdateUserDto) {
@@ -72,11 +53,5 @@ export class UserService {
             },
         });
         return user;
-        // const userDto: UserResponseDto = this.mapper.map(
-        //     user,
-        //     User,
-        //     UserResponseDto,
-        // );
-        // return userDto;
     }
 }

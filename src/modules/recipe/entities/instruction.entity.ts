@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { Allow, IsInt, IsString } from 'class-validator';
 import AbstractEntity from 'src/common/abstract.entity';
@@ -20,9 +21,11 @@ export default class Instruction extends AbstractEntity {
         type: 'int',
     })
     @IsInt()
+    @ApiProperty()
     stepNo: number;
 
     @Column()
     @IsString()
+    @ApiProperty()
     description: string;
 }

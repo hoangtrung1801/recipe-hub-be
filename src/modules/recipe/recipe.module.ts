@@ -7,7 +7,6 @@ import Instruction from './entities/instruction.entity';
 import Nutrition from './entities/nutrition.entity';
 import Recipe from './entities/recipe.entity';
 import { RecipeController } from './recipe.controller';
-import { IngredientService } from './services/ingredient.service';
 import { RecipeService } from './services/recipe.service';
 import Comment from './entities/comment.entity';
 import Changelog from './entities/changelog.entity';
@@ -26,7 +25,7 @@ import Changelog from './entities/changelog.entity';
         ]),
     ],
     controllers: [RecipeController],
-    providers: [RecipeService, IngredientService],
+    providers: [RecipeService],
     exports: [TypeOrmModule, RecipeService],
 })
 export class RecipeModule {}

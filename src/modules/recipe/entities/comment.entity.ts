@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { Allow, IsString } from 'class-validator';
 import AbstractEntity from 'src/common/abstract.entity';
@@ -21,5 +22,6 @@ export default class Comment extends AbstractEntity {
 
     @Column()
     @IsString()
+    @ApiProperty()
     message: string;
 }
