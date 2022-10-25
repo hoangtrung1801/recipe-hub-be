@@ -48,7 +48,7 @@ async function bootstrap() {
             Catalog,
         ],
     });
-    SwaggerModule.setup('api', app, document);
+    SwaggerModule.setup('/api/docs', app, document);
 
     await app.listen(AppModule.port);
     return AppModule.port;
