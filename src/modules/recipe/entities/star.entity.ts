@@ -10,7 +10,9 @@ export class Star {
     @JoinColumn({ name: 'recipeId' })
     recipe: Recipe;
 
-    @ManyToOne(() => User, (user) => user.stars)
+    @ManyToOne(() => User, (user) => user.stars, {
+        onDelete: 'CASCADE',
+    })
     @JoinColumn({ name: 'userId' })
     user: User;
 

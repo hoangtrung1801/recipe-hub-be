@@ -91,6 +91,7 @@ export default class Recipe extends AbstractEntity {
 
     @ManyToOne(() => User, (user: User) => user.recipes, {
         nullable: false,
+        onDelete: 'CASCADE',
     })
     @Type(() => User)
     @IsEmpty()
