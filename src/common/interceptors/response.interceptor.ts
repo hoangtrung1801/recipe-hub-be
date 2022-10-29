@@ -5,6 +5,7 @@ import {
     NestInterceptor,
 } from '@nestjs/common';
 import { map, Observable } from 'rxjs';
+import ResponseStatus from '../enums/response-status.enum';
 
 @Injectable()
 export class ResponseInterceptor implements NestInterceptor {
@@ -12,6 +13,8 @@ export class ResponseInterceptor implements NestInterceptor {
         context: ExecutionContext,
         next: CallHandler<any>,
     ): Observable<any> | Promise<Observable<any>> {
-        return next.handle().pipe(map((data) => ({ data })));
+        return next
+            .handle()
+            .pipe(map((data) => ({ status: ResponseStatus.SUCCESS, data })));
     }
 }

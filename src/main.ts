@@ -7,6 +7,7 @@ import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import { AppModule } from './app.module';
+import HttpExceptionFilter from './common/exceptions/http-exception.filter';
 import { ResponseInterceptor } from './common/interceptors/response.interceptor';
 import getLogLevels from './libs/get-log-levels';
 import Catalog from './modules/catalog/entities/catalog.entity';
@@ -28,6 +29,7 @@ async function bootstrap() {
 
     app.useGlobalPipes(new ValidationPipe());
     app.useGlobalInterceptors(new ResponseInterceptor());
+    app.useGlobalFilters(new HttpExceptionFilter());
 
     app.enableCors();
 
