@@ -1,8 +1,4 @@
-import {
-    ApiProperty,
-    ApiRequestTimeoutResponse,
-    getSchemaPath,
-} from '@nestjs/swagger';
+import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
     Allow,

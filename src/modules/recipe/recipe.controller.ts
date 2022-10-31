@@ -11,24 +11,16 @@ import {
     SerializeOptions,
     UseInterceptors,
 } from '@nestjs/common';
-import {
-    ApiBearerAuth,
-    ApiOkResponse,
-    ApiOperation,
-    ApiTags,
-} from '@nestjs/swagger';
-import { ApiGlobalResponse } from 'src/common/decorators/api-global-response.decorator';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RequestWithUser } from 'src/common/dto/request-with-user.dto';
 import Role from 'src/common/enums/role.enum';
-import User from '../user/entities/user.entity';
 import { ForkRecipeDto } from './dto/request/fork-recipe.dto';
 import { UpdateRecipeDto } from './dto/request/update-recipe.dto';
 import Changelog from './entities/changelog.entity';
 import Comment from './entities/comment.entity';
 import Recipe from './entities/recipe.entity';
-import { Star } from './entities/star.entity';
 import { RecipeService } from './services/recipe.service';
 
 @Controller('recipes')

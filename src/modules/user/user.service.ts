@@ -1,4 +1,4 @@
-import { Injectable, HttpException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserNotExistException } from 'src/common/exceptions/user-not-exist.exception';
 import { Repository } from 'typeorm';
