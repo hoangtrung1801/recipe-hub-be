@@ -13,9 +13,13 @@ export class AuthService {
     ) {}
 
     async register(registrationDto: RegistrationDto) {
-        const hashedPassword = await bcrypt.hash(registrationDto.password, 10);
-        registrationDto.password = hashedPassword;
         try {
+            const hashedPassword = await bcrypt.hash(
+                registrationDto.password,
+                10,
+            );
+            registrationDto.password = hashedPassword;
+
             const user = await this.userService.create(registrationDto);
             return user;
         } catch (error) {
@@ -24,19 +28,10 @@ export class AuthService {
     }
 
     async validateUser(username: string, password: string) {
-        try {
-            const user: User = await this.userService.findOneByUsername(
-                username,
-            );
-            await this.verifyPassword(user.password, password);
-            delete user.password;
-            return user;
-        } catch {
-            throw new HttpException(
-                'Wrong credential provied',
-                HttpStatus.BAD_REQUEST,
-            );
-        }
+        const user: User = await this.userService.findOneByUsername(username);
+        await this.verifyPassword(user.password, password);
+
+        return user;
     }
 
     async login(user: User) {
@@ -57,6 +52,7 @@ export class AuthService {
     async logout() {
         const cookie =
             'Authorization=; HttpOnly; Path=/; Secure; SameSite=None';
+
         return {
             cookie,
         };
@@ -68,10 +64,7 @@ export class AuthService {
             password,
         );
         if (!isPasswordMatching) {
-            throw new HttpException(
-                'Wrong credential provied',
-                HttpStatus.BAD_REQUEST,
-            );
+            throw new HttpException('Wrong password', HttpStatus.BAD_REQUEST);
         }
         return isPasswordMatching;
     }

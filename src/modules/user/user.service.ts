@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserNotExistException } from 'src/common/exceptions/user-not-exist.exception';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/request/create-user.dto';
 import { UpdateUserDto } from './dto/request/update-user.dto';
@@ -52,6 +53,10 @@ export class UserService {
                 username,
             },
         });
+
+        if (!user) {
+            throw new UserNotExistException(username);
+        }
         return user;
     }
 }
