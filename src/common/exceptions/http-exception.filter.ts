@@ -10,24 +10,30 @@ import ResponseStatus from '../enums/response-status.enum';
 
 @Catch()
 export default class HttpExceptionFilter extends BaseExceptionFilter {
-    catch(exception: HttpException, host: ArgumentsHost): void {
+    catch(exception: HttpException | Error, host: ArgumentsHost): void {
         const http = host.switchToHttp();
         const response = http.getResponse<Response>();
 
-        response.status(exception.getStatus()).json(
-            exception.getStatus() === HttpStatus.BAD_REQUEST
-                ? {
-                      status: ResponseStatus.FAIL,
-                      data:
-                          exception.getResponse()['message'] ||
-                          exception.message,
-                  }
-                : {
-                      status: ResponseStatus.ERROR,
-                      message:
-                          exception.getResponse()['message'] ||
-                          exception.message,
-                  },
-        );
+        if (exception instanceof Error) {
+            response.status(HttpStatus.NOT_ACCEPTABLE).json({
+                status: ResponseStatus.ERROR,
+                message: exception.message,
+            });
+        } else {
+            const status = (exception as HttpException).getStatus();
+            const httpResponse = (exception as HttpException).getResponse();
+            const message = (exception as HttpException).message;
+            response.status(status).json(
+                status === HttpStatus.BAD_REQUEST
+                    ? {
+                          status: ResponseStatus.FAIL,
+                          data: httpResponse['message'] || message,
+                      }
+                    : {
+                          status: ResponseStatus.ERROR,
+                          message: httpResponse['message'] || message,
+                      },
+            );
+        }
     }
 }
