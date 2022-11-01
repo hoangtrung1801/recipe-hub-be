@@ -10,8 +10,14 @@ import {
     Req,
     SerializeOptions,
     UseInterceptors,
+    Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiOperation,
+    ApiQuery,
+    ApiTags,
+} from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { RequestWithUser } from 'src/common/dto/request-with-user.dto';
@@ -33,15 +39,26 @@ import { RecipeService } from './services/recipe.service';
 export class RecipeController {
     constructor(private readonly recipeService: RecipeService) {}
 
+    /* GET */
     @Get()
     @Public()
     @ApiOperation({ summary: 'Get all recipes' })
+    @ApiQuery({
+        name: 'q',
+        description: 'Search by name',
+        required: false,
+    })
+    @ApiQuery({
+        name: 'c',
+        description: 'Search by category name',
+        required: false,
+    })
     // @ApiGlobalResponse({
     //     type: [Recipe],
     //     description: 'Return all recipes',
     // })
-    findAll() {
-        return this.recipeService.findAll();
+    findAll(@Query('q') q: string, @Query('c') c: string) {
+        return this.recipeService.findAll(q, c);
     }
 
     @Get(':id')
@@ -116,6 +133,7 @@ export class RecipeController {
         return this.recipeService.getCurrentInstructions(id);
     }
 
+    /* POST */
     @Post()
     @Roles(Role.Admin, Role.User)
     @ApiOperation({
@@ -164,6 +182,7 @@ export class RecipeController {
         return this.recipeService.createChangelog(id, changelog);
     }
 
+    /* PUT */
     @Put(':id')
     @Roles(Role.Admin, Role.User)
     @ApiOperation({ summary: "Update main recipe's information" })
@@ -171,6 +190,7 @@ export class RecipeController {
         return this.recipeService.update(id, recipe);
     }
 
+    /* DELETE */
     @Delete(':id')
     @Roles(Role.Admin, Role.User)
     @ApiOperation({ summary: 'Delete recipe' })
