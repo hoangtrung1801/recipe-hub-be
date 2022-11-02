@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Exclude, Type } from 'class-transformer';
 import { Allow, IsOptional, IsString } from 'class-validator';
 import AbstractEntity from 'src/common/abstract.entity';
 import FileType from 'src/common/enums/file-type.enum';

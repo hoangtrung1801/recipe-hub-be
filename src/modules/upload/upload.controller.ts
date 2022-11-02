@@ -11,6 +11,7 @@ import {
     ApiConsumes,
     ApiOkResponse,
     ApiOperation,
+    ApiTags,
 } from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';
 import File from './entities/file.entity';
@@ -18,6 +19,7 @@ import { FileUploadDto } from './request/file-upload.dto';
 import { UploadService } from './upload.service';
 
 @Controller('upload')
+@ApiTags('Upload')
 export class UploadController {
     constructor(private readonly uploadService: UploadService) {}
 

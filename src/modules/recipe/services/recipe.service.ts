@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { deepCloneWithoutId } from 'src/libs/deep-clone';
 import User from 'src/modules/user/entities/user.entity';
-import { IsNull, Like, Not, Repository } from 'typeorm';
+import { Like, Not, Repository } from 'typeorm';
 import { ForkRecipeDto } from '../dto/request/fork-recipe.dto';
 import { UpdateRecipeDto } from '../dto/request/update-recipe.dto';
 import Changelog from '../entities/changelog.entity';
