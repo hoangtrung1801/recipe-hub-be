@@ -11,6 +11,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { CatalogModule } from './modules/catalog/catalog.module';
 import { RecipeModule } from './modules/recipe/recipe.module';
+import { UploadModule } from './modules/upload/upload.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -26,6 +27,7 @@ import { UserModule } from './modules/user/user.module';
         AuthModule,
         RecipeModule,
         CatalogModule,
+        UploadModule,
     ],
     controllers: [AppController],
     providers: [

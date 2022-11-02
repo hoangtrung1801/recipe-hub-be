@@ -16,7 +16,7 @@ export default class HttpExceptionFilter extends BaseExceptionFilter {
     catch(exception: HttpException | Error, host: ArgumentsHost): void {
         const http = host.switchToHttp();
         const response = http.getResponse<Response>();
-        this.logger.error(exception);
+        // this.logger.error(exception);
 
         // if (exception instanceof Error) {
         //     response.status(HttpStatus.NOT_ACCEPTABLE).json({
