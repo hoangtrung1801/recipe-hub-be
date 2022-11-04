@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ExistUserException } from 'src/common/exceptions/exist-user.exception';
 import { UserNotExistException } from 'src/common/exceptions/user-not-exist.exception';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/request/create-user.dto';
@@ -14,7 +15,11 @@ export class UserService {
     ) {}
 
     async create(createUserDto: CreateUserDto) {
-        console.log(createUserDto);
+        const { username } = createUserDto;
+
+        const existUser = await this.findOneByUsername(username);
+        if (existUser) throw new ExistUserException(username);
+
         return this.userRepository.save({
             ...createUserDto,
         });
@@ -31,10 +36,12 @@ export class UserService {
                 id,
             },
         });
+        if (!user) throw new UserNotExistException(id);
         return user;
     }
 
     async update(id: string, updateUserDto: UpdateUserDto) {
+        await this.findOne(id);
         await this.userRepository.update(id, {
             ...updateUserDto,
         });
@@ -42,9 +49,10 @@ export class UserService {
     }
 
     async delete(id: string) {
-        const user = await this.findOne(id);
+        await this.findOne(id);
         await this.userRepository.delete(id);
-        return user;
+
+        return;
     }
 
     async findOneByUsername(username: string) {
@@ -53,10 +61,7 @@ export class UserService {
                 username,
             },
         });
-
-        if (!user) {
-            throw new UserNotExistException(username);
-        }
+        if (!user) throw new UserNotExistException(username);
         return user;
     }
 }

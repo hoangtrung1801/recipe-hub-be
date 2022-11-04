@@ -1,6 +1,7 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { UserNotExistException } from 'src/common/exceptions/user-not-exist.exception';
 import User from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { RegistrationDto } from './dto/request/registration.dto';
@@ -13,18 +14,16 @@ export class AuthService {
     ) {}
 
     async register(registrationDto: RegistrationDto) {
-        try {
-            const hashedPassword = await bcrypt.hash(
-                registrationDto.password,
-                10,
-            );
-            registrationDto.password = hashedPassword;
+        const { username, password } = registrationDto;
+        const existUser = this.userService.findOneByUsername(username);
 
-            const user = await this.userService.create(registrationDto);
-            return user;
-        } catch (error) {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST);
-        }
+        if (!existUser) throw new UserNotExistException(username);
+
+        const hashedPassword = await this.hashPassword(password);
+        registrationDto.password = hashedPassword;
+
+        const user = await this.userService.create(registrationDto);
+        return user;
     }
 
     async validateUser(username: string, password: string) {
@@ -35,9 +34,12 @@ export class AuthService {
     }
 
     async login(user: User) {
+        const { username, id } = user;
+        // await this.userService.findOneByUsername(username);
+
         const payload = {
-            username: user.username,
-            sub: user.id,
+            username,
+            sub: id,
         };
 
         const accessToken = this.jwtService.sign(payload);
@@ -64,8 +66,12 @@ export class AuthService {
             password,
         );
         if (!isPasswordMatching) {
-            throw new HttpException('Wrong password', HttpStatus.BAD_REQUEST);
+            throw new BadRequestException('Wrong password');
         }
         return isPasswordMatching;
+    }
+
+    async hashPassword(password: string) {
+        return await bcrypt.hash(password, 10);
     }
 }
