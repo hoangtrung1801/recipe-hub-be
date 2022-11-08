@@ -31,7 +31,10 @@ async function bootstrap() {
     app.useGlobalInterceptors(new ResponseInterceptor());
     app.useGlobalFilters(new HttpExceptionFilter());
 
-    app.enableCors();
+    app.enableCors({
+        origin: 'http://localhost:3001',
+        credentials: true,
+    });
 
     const config = new DocumentBuilder()
         .setTitle('Recipe Hub')

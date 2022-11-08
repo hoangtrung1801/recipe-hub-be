@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { NotExistRecipeException } from 'src/common/exceptions/not-exist-recipe.exception';
 import { deepCloneWithoutId } from 'src/libs/deep-clone';
 import User from 'src/modules/user/entities/user.entity';
 import { Like, Not, Repository } from 'typeorm';
@@ -43,29 +44,36 @@ export class RecipeService {
                       }
                     : {},
             },
+            order: {
+                createdAt: 'ASC',
+            },
         });
         return recipes;
     }
 
-    async findOne(id: string) {
-        return this.recipeRepository.findOne({
+    async findOne(id: string, relations = true) {
+        const recipe = await this.recipeRepository.findOne({
             where: {
                 id,
             },
-            relations: {
-                forkFrom: true,
-                ingredients: true,
-                cookTime: true,
-                nutrition: true,
-                comments: true,
-                catalogs: true,
-            },
+            relations: relations
+                ? {
+                      forkFrom: true,
+                      ingredients: true,
+                      cookTime: true,
+                      nutrition: true,
+                      comments: true,
+                      catalogs: true,
+                  }
+                : {},
             order: {
                 comments: {
                     createdAt: 'ASC',
                 },
             },
         });
+        if (!recipe) throw new NotExistRecipeException(id);
+        return recipe;
     }
 
     async create(recipeData: Recipe, user: User) {
@@ -77,18 +85,24 @@ export class RecipeService {
     }
 
     async update(id: string, updateRecipeDto: UpdateRecipeDto) {
+        const recipe = await this.findOne(id, false);
+
         await this.recipeRepository.update(id, {
             ...updateRecipeDto,
         });
-        return this.recipeRepository.findOne({
-            where: { id },
-        });
+
+        return {
+            ...recipe,
+            ...updateRecipeDto,
+        };
     }
 
     async delete(id: string) {
-        const recipe = this.recipeRepository.findOne({ where: { id } });
+        await this.findOne(id, false);
+
         await this.recipeRepository.delete(id);
-        return recipe;
+
+        return;
     }
 
     // Star
@@ -116,6 +130,7 @@ export class RecipeService {
                 },
             },
         });
+
         return {
             numberOfStar: stars.length,
             stars,

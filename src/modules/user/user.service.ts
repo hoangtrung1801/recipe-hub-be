@@ -61,7 +61,7 @@ export class UserService {
                 username,
             },
         });
-        if (!user) throw new UserNotExistException(username);
-        return user;
+        // if (!user) throw new UserNotExistException(username);
+        return user || null;
     }
 }
