@@ -7,8 +7,11 @@ import {
     IsEmpty,
     IsEnum,
     IsNotEmpty,
+    IsObject,
     IsOptional,
     IsString,
+    IsUrl,
+    IsUUID,
     ValidateNested,
 } from 'class-validator';
 import AbstractEntity from 'src/common/abstract.entity';
@@ -176,11 +179,12 @@ export default class Recipe extends AbstractEntity {
     @ManyToMany(() => Catalog, (catalog) => catalog.recipes)
     @JoinTable()
     @Type(() => Catalog)
-    @ValidateNested({ each: true })
-    @IsArray()
+    // @ValidateNested({ each: true })
+    // @IsUUID('4', { each: true })
+    @IsObject({ each: true })
     @ArrayMinSize(1)
     @ApiProperty({
-        default: ['catalogId1', 'catalogId2'],
+        default: [{ id: 'catalogId1' }, { id: 'catalogId2' }],
         type: String,
         isArray: true,
     })
@@ -192,6 +196,13 @@ export default class Recipe extends AbstractEntity {
     @Type(() => Changelog)
     @IsEmpty()
     changelogs: Changelog[];
+
+    @Column({
+        nullable: false,
+    })
+    @IsUrl()
+    @ApiProperty()
+    imageUrl: string;
 
     constructor(partial: Partial<Recipe>) {
         super();
