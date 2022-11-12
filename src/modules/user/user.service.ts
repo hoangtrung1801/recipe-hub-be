@@ -17,7 +17,7 @@ export class UserService {
     async create(createUserDto: CreateUserDto) {
         const { username } = createUserDto;
 
-        const existUser = await this.findOneByUsername(username);
+        const existUser = await this.findOneByUsernameNotException(username);
         if (existUser) throw new ExistUserException(username);
 
         return this.userRepository.save({
@@ -59,13 +59,22 @@ export class UserService {
         return;
     }
 
-    async findOneByUsername(username: string) {
+    async findOneByUsernameNotException(username: string) {
         const user: User = await this.userRepository.findOne({
             where: {
                 username,
             },
+            relations: {
+                stars: true,
+                recipes: true,
+            },
         });
-        // if (!user) throw new UserNotExistException(username);
         return user || null;
+    }
+
+    async findOneByUsername(username: string) {
+        const user = await this.findOneByUsernameNotException(username);
+        if (!user) throw new UserNotExistException(username);
+        return user;
     }
 }

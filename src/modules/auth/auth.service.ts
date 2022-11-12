@@ -15,7 +15,8 @@ export class AuthService {
 
     async register(registrationDto: RegistrationDto) {
         const { username, password } = registrationDto;
-        const existUser = this.userService.findOneByUsername(username);
+        const existUser =
+            this.userService.findOneByUsernameNotException(username);
 
         if (!existUser) throw new UserNotExistException(username);
 
@@ -27,7 +28,9 @@ export class AuthService {
     }
 
     async validateUser(username: string, password: string) {
-        const user: User = await this.userService.findOneByUsername(username);
+        const user: User = await this.userService.findOneByUsernameNotException(
+            username,
+        );
 
         if (!user) throw new UserNotExistException(username);
 

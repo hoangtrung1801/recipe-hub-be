@@ -58,6 +58,18 @@ export class UserController {
         return this.userService.findOne(id);
     }
 
+    @Public()
+    @Get('/username/:username')
+    @ApiOperation({ summary: 'Get user by username' })
+    @ApiOkResponse({
+        description: 'Successfull',
+        type: User,
+    })
+    findOneByUsername(@Param('username') username: string) {
+        console.log(username);
+        return this.userService.findOneByUsername(username);
+    }
+
     @Post()
     @Roles(Role.Admin)
     @ApiOperation({ summary: 'Create user' })
