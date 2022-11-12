@@ -3,7 +3,6 @@ import { Type } from 'class-transformer';
 import {
     Allow,
     ArrayMinSize,
-    IsArray,
     IsEmpty,
     IsEnum,
     IsNotEmpty,
@@ -11,7 +10,6 @@ import {
     IsOptional,
     IsString,
     IsUrl,
-    IsUUID,
     ValidateNested,
 } from 'class-validator';
 import AbstractEntity from 'src/common/abstract.entity';

@@ -1,5 +1,6 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import HttpExceptionFilter from 'src/common/exceptions/http-exception.filter';
 import { NotExistRecipeException } from 'src/common/exceptions/not-exist-recipe.exception';
 import { deepCloneWithoutId } from 'src/libs/deep-clone';
 import User from 'src/modules/user/entities/user.entity';
@@ -64,6 +65,7 @@ export class RecipeService {
                       nutrition: true,
                       comments: true,
                       catalogs: true,
+                      user: true,
                   }
                 : {},
             order: {
@@ -77,8 +79,13 @@ export class RecipeService {
     }
 
     async create(recipeData: Recipe, user: User) {
+        const changelog = this.changelogRepository.create({
+            message: 'Init recipe',
+            instructions: recipeData.instructions,
+        });
         const recipe = await this.recipeRepository.save({
             user,
+            changelogs: [changelog],
             ...recipeData,
         });
         return recipe;
@@ -117,8 +124,14 @@ export class RecipeService {
         );
 
         return this.starRepository.save({
-            recipeId: id,
-            userId: user.id,
+            recipe: {
+                id,
+            },
+            user: {
+                id: user.id,
+            },
+            // recipeId: id,
+            // userId: user.id,
         });
     }
 
@@ -193,6 +206,7 @@ export class RecipeService {
                 ingredients: true,
                 instructions: true,
                 nutrition: true,
+                stars: true,
             },
         });
 
@@ -286,6 +300,10 @@ export class RecipeService {
             },
         });
 
+        if (!changelog) {
+            throw new BadRequestException(`Changelog does not exist`);
+        }
+
         return {
             ...changelog,
             instructions: await this.getInstructionsInChangelog(
@@ -306,6 +324,7 @@ export class RecipeService {
                 createdAt: 'DESC',
             },
         });
+
         return this.getInstructionsInChangelog(id, changelog.id);
     }
 

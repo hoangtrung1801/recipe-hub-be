@@ -28,6 +28,9 @@ export class AuthService {
 
     async validateUser(username: string, password: string) {
         const user: User = await this.userService.findOneByUsername(username);
+
+        if (!user) throw new UserNotExistException(username);
+
         await this.verifyPassword(user.password, password);
 
         return user;

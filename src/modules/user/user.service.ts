@@ -35,6 +35,10 @@ export class UserService {
             where: {
                 id,
             },
+            relations: {
+                stars: true,
+                recipes: true,
+            },
         });
         if (!user) throw new UserNotExistException(id);
         return user;
