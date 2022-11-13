@@ -66,6 +66,7 @@ export class RecipeService {
                       comments: true,
                       catalogs: true,
                       user: true,
+                      stars: true,
                   }
                 : {},
             order: {
@@ -75,6 +76,7 @@ export class RecipeService {
             },
         });
         if (!recipe) throw new NotExistRecipeException(id);
+
         return recipe;
     }
 
@@ -105,7 +107,7 @@ export class RecipeService {
     }
 
     async delete(id: string) {
-        await this.findOne(id, false);
+        // await this.findOne(id, false);
 
         await this.recipeRepository.delete(id);
 
@@ -114,40 +116,73 @@ export class RecipeService {
 
     // Star
     async star(id: string, user: User) {
-        // increase number of stars
-        await this.recipeRepository.increment(
-            {
-                id,
-            },
-            'numberOfStar',
-            1,
-        );
-
-        return this.starRepository.save({
-            recipe: {
-                id,
-            },
-            user: {
-                id: user.id,
-            },
-            // recipeId: id,
-            // userId: user.id,
+        const recipe = await this.recipeRepository.findOne({
+            where: { id },
+            relations: { stars: true },
         });
+        if (!recipe) {
+            throw new NotExistRecipeException(id);
+        }
+
+        // await this.recipeRepository.update(id, {
+        //     stars: [...recipe.stars, user],
+        // });
+        recipe.stars = [...recipe.stars, user];
+        return await this.recipeRepository.save(recipe);
+
+        // recipe.stars = [...recipe.stars, user];
+        // await this.recipeRepository.save(recipe);
+
+        return recipe;
+
+        //     // increase number of stars
+        //     await this.recipeRepository.increment(
+        //         {
+        //             id,
+        //         },
+        //         'numberOfStar',
+        //         1,
+        //     );
+
+        //     await this.recipeRepository.update(id, {
+        //         stars,
+        //     });
+
+        //     return this.starRepository.save({
+        //         recipe: {
+        //             id,
+        //         },
+        //         user: {
+        //             id: user.id,
+        //         },
+        //         // recipeId: id,
+        //         // userId: user.id,
+        //     });
     }
 
     async getAllStars(id: string) {
-        const stars = await this.starRepository.find({
-            where: {
-                recipe: {
-                    id,
-                },
-            },
+        const recipe = await this.recipeRepository.findOne({
+            where: { id },
+            relations: { stars: true },
         });
+        if (!recipe) {
+            throw new NotExistRecipeException(id);
+        }
 
-        return {
-            numberOfStar: stars.length,
-            stars,
-        };
+        return recipe.stars;
+
+        // const stars = await this.starRepository.find({
+        //     where: {
+        //         recipe: {
+        //             id,
+        //         },
+        //     },
+        // });
+
+        // return {
+        //     numberOfStar: stars.length,
+        //     stars,
+        // };
     }
 
     // Comments

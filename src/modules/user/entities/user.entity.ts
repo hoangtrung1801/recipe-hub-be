@@ -5,7 +5,7 @@ import AbstractEntity from 'src/common/abstract.entity';
 import Role from 'src/common/enums/role.enum';
 import Recipe from 'src/modules/recipe/entities/recipe.entity';
 import { Star } from 'src/modules/recipe/entities/star.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, ManyToMany, OneToMany } from 'typeorm';
 
 @Entity()
 export default class User extends AbstractEntity {
@@ -54,10 +54,10 @@ export default class User extends AbstractEntity {
     @Allow()
     recipes: Recipe[];
 
-    @OneToMany(() => Star, (star) => star.recipe)
+    @ManyToMany(() => Recipe, (recipe) => recipe.stars)
     @Type(() => Star)
     @Allow()
-    stars: Star[];
+    stars: Recipe[];
 
     constructor(partial: Partial<User>) {
         super();

@@ -51,21 +51,21 @@ export default class Recipe extends AbstractEntity {
     @ApiProperty()
     description: string;
 
-    @Column({
-        default: 0,
-        type: 'int',
-    })
-    @IsEmpty()
-    @ApiProperty()
-    numberOfStar: number;
+    // @Column({
+    //     default: 0,
+    //     type: 'int',
+    // })
+    // @IsEmpty()
+    // @ApiProperty()
+    // numberOfStar: number;
 
-    @Column({
-        default: 0,
-        type: 'int',
-    })
-    @IsEmpty()
-    @ApiProperty()
-    numberOfFork: number;
+    // @Column({
+    //     default: 0,
+    //     type: 'int',
+    // })
+    // @IsEmpty()
+    // @ApiProperty()
+    // numberOfFork: number;
 
     @Column({
         type: 'enum',
@@ -162,11 +162,11 @@ export default class Recipe extends AbstractEntity {
     })
     nutrition: Nutrition;
 
-    @OneToMany(() => Star, (star) => star.recipe)
-    @Allow()
-    @Type(() => Star)
+    @ManyToMany(() => User, (user) => user.stars)
+    @JoinTable()
+    @Type(() => User)
     @IsEmpty()
-    stars: Star[];
+    stars: User[];
 
     @OneToMany(() => Comment, (comment) => comment.recipe)
     @Allow()
