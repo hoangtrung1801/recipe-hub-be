@@ -8,6 +8,8 @@ export class CreateUserDto extends PickType(User, [
     'phone',
     'role',
     'address',
+    'avatarUrl',
+    'description',
 ]) {
     @ApiProperty()
     password: string;
