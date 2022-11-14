@@ -59,13 +59,13 @@ export default class Recipe extends AbstractEntity {
     // @ApiProperty()
     // numberOfStar: number;
 
-    // @Column({
-    //     default: 0,
-    //     type: 'int',
-    // })
-    // @IsEmpty()
-    // @ApiProperty()
-    // numberOfFork: number;
+    @Column({
+        default: 0,
+        type: 'int',
+    })
+    @IsEmpty()
+    @ApiProperty()
+    numberOfFork: number;
 
     @Column({
         type: 'enum',

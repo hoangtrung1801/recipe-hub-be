@@ -1,6 +1,5 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import HttpExceptionFilter from 'src/common/exceptions/http-exception.filter';
 import { NotExistRecipeException } from 'src/common/exceptions/not-exist-recipe.exception';
 import { deepCloneWithoutId } from 'src/libs/deep-clone';
 import User from 'src/modules/user/entities/user.entity';
@@ -239,6 +238,7 @@ export class RecipeService {
             forkFrom: {
                 id: recipe.id,
             },
+            imageUrl: recipe.imageUrl,
             user,
             ...forkRecipeDto,
         });
@@ -373,7 +373,7 @@ export class RecipeService {
             });
     }
 
-    private async findOneWithRelations(id: string, relations: string[]) {
+    private async findOneWithRelations(id: string, relations: string[] = []) {
         const relationsToObj = {};
         relations.map((relation) => (relationsToObj[relation] = true));
         return this.recipeRepository.findOne({
