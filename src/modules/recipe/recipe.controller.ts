@@ -151,6 +151,13 @@ export class RecipeController {
         return this.recipeService.star(id, currentUser);
     }
 
+    @Post(':id/unstar')
+    @ApiOperation({ summary: 'User unstar (unlike) recipe' })
+    unstarRecipe(@Param('id') id: string, @Req() req: RequestWithUser) {
+        const currentUser = req.user;
+        return this.recipeService.unstar(id, currentUser);
+    }
+
     @Post(':id/fork')
     @ApiOperation({ summary: 'User fork from recipe with id' })
     async forkRecipe(

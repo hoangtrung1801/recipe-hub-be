@@ -124,40 +124,28 @@ export class RecipeService {
             throw new NotExistRecipeException(id);
         }
 
-        // await this.recipeRepository.update(id, {
-        //     stars: [...recipe.stars, user],
-        // });
+        if (recipe.stars.some((userStarred) => userStarred.id === user.id)) {
+            throw new BadRequestException(`User starred this recipe.`);
+        }
+
         recipe.stars = [...recipe.stars, user];
         return await this.recipeRepository.save(recipe);
+    }
 
-        // recipe.stars = [...recipe.stars, user];
-        // await this.recipeRepository.save(recipe);
+    async unstar(id: string, user: User) {
+        const recipe = await this.findOneWithRelations(id, ['stars']);
+        if (!recipe) {
+            throw new NotExistRecipeException(id);
+        }
 
-        return recipe;
+        if (!recipe.stars.some((userStarred) => userStarred.id === user.id)) {
+            throw new BadRequestException(`User didn't star this recipe.`);
+        }
 
-        //     // increase number of stars
-        //     await this.recipeRepository.increment(
-        //         {
-        //             id,
-        //         },
-        //         'numberOfStar',
-        //         1,
-        //     );
-
-        //     await this.recipeRepository.update(id, {
-        //         stars,
-        //     });
-
-        //     return this.starRepository.save({
-        //         recipe: {
-        //             id,
-        //         },
-        //         user: {
-        //             id: user.id,
-        //         },
-        //         // recipeId: id,
-        //         // userId: user.id,
-        //     });
+        recipe.stars = recipe.stars.filter(
+            (userStarred) => userStarred.id !== user.id,
+        );
+        return this.recipeRepository.save(recipe);
     }
 
     async getAllStars(id: string) {
@@ -170,19 +158,6 @@ export class RecipeService {
         }
 
         return recipe.stars;
-
-        // const stars = await this.starRepository.find({
-        //     where: {
-        //         recipe: {
-        //             id,
-        //         },
-        //     },
-        // });
-
-        // return {
-        //     numberOfStar: stars.length,
-        //     stars,
-        // };
     }
 
     // Comments
@@ -396,5 +371,14 @@ export class RecipeService {
                         changelog.createdAt.getTime()
                 );
             });
+    }
+
+    private async findOneWithRelations(id: string, relations: string[]) {
+        const relationsToObj = {};
+        relations.map((relation) => (relationsToObj[relation] = true));
+        return this.recipeRepository.findOne({
+            where: { id },
+            relations: relationsToObj,
+        });
     }
 }
