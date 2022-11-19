@@ -32,7 +32,6 @@ import CookTime from './cook-time.entity';
 import Ingredient from './ingredient.entity';
 import Instruction from './instruction.entity';
 import Nutrition from './nutrition.entity';
-import { Star } from './star.entity';
 
 @Entity()
 export default class Recipe extends AbstractEntity {
