@@ -17,7 +17,6 @@ export default class HttpExceptionFilter extends BaseExceptionFilter {
         const http = host.switchToHttp();
         const response = http.getResponse<Response>();
 
-        console.error(exception);
         // this.logger.error(exception);
 
         // if (exception instanceof Error) {

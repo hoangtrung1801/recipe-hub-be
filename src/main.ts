@@ -29,7 +29,7 @@ async function bootstrap() {
 
     app.useGlobalPipes(new ValidationPipe());
     app.useGlobalInterceptors(new ResponseInterceptor());
-    app.useGlobalFilters(new HttpExceptionFilter());
+    // app.useGlobalFilters(new HttpExceptionFilter());
 
     app.enableCors({
         origin: 'http://localhost:3001',

@@ -248,15 +248,26 @@ export class RecipeService {
 
     // Changelog
     async findAllChangelogs(id: string) {
-        const recipe = await this.recipeRepository.findOne({
+        // const recipe = await this.recipeRepository.findOne({
+        //     where: {
+        //         id,
+        //     },
+        //     relations: {
+        //         changelogs: true,
+        //     },
+        // });
+        // return recipe.changelogs;
+        const changelogs = await this.changelogRepository.find({
             where: {
-                id,
+                recipe: {
+                    id,
+                },
             },
-            relations: {
-                changelogs: true,
+            order: {
+                createdAt: 'desc',
             },
         });
-        return recipe.changelogs;
+        return changelogs;
     }
 
     async findChangelogById(recipeId: string, changelogId: string) {
