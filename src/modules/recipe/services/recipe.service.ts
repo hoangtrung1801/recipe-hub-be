@@ -167,8 +167,11 @@ export class RecipeService {
                     id,
                 },
             },
+            relations: {
+                user: true,
+            },
             order: {
-                createdAt: 'ASC',
+                createdAt: 'desc',
             },
         });
         return {
