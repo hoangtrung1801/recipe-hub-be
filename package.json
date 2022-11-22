@@ -82,6 +82,7 @@
     "eslint-plugin-unicorn": "^44.0.2",
     "husky": "^8.0.0",
     "jest": "28.1.3",
+    "lint-staged": "^13.0.3",
     "nestjs-seeder": "^0.3.0",
     "prettier": "^2.3.2",
     "source-map-support": "^0.5.20",
@@ -108,5 +109,11 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint src/",
+      "prettier -w src"
+    ]
   }
 }
