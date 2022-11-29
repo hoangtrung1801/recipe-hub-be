@@ -10,6 +10,7 @@ import { RecipeController } from './recipe.controller';
 import { RecipeService } from './services/recipe.service';
 import Comment from './entities/comment.entity';
 import Changelog from './entities/changelog.entity';
+import Catalog from '../catalog/entities/catalog.entity';
 
 @Module({
     imports: [
@@ -22,6 +23,7 @@ import Changelog from './entities/changelog.entity';
             Star,
             Comment,
             Changelog,
+            Catalog,
         ]),
     ],
     controllers: [RecipeController],

@@ -37,7 +37,9 @@ export class UserService {
             },
             relations: {
                 stars: true,
-                recipes: true,
+                recipes: {
+                    forkFrom: true,
+                },
             },
         });
         if (!user) throw new UserNotExistException(id);

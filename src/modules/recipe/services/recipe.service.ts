@@ -2,8 +2,9 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { NotExistRecipeException } from 'src/common/exceptions/not-exist-recipe.exception';
 import { deepCloneWithoutId } from 'src/libs/deep-clone';
+import Catalog from 'src/modules/catalog/entities/catalog.entity';
 import User from 'src/modules/user/entities/user.entity';
-import { Like, Not, Repository } from 'typeorm';
+import { Like, Not, Repository, UpdateDateColumn } from 'typeorm';
 import { ForkRecipeDto } from '../dto/request/fork-recipe.dto';
 import { UpdateRecipeDto } from '../dto/request/update-recipe.dto';
 import Changelog from '../entities/changelog.entity';
@@ -32,6 +33,9 @@ export class RecipeService {
 
         @InjectRepository(Instruction)
         private readonly instructionRepository: Repository<Instruction>,
+
+        @InjectRepository(Catalog)
+        private readonly catalogRepository: Repository<Catalog>,
     ) {}
 
     async findAll(q?: string, c?: string) {
@@ -93,16 +97,32 @@ export class RecipeService {
     }
 
     async update(id: string, updateRecipeDto: UpdateRecipeDto) {
-        const recipe = await this.findOne(id, false);
+        const recipe = await this.recipeRepository.findOne({ where: { id } });
+        // const recipe = await this.findOne(id, false);
 
-        await this.recipeRepository.update(id, {
+        // await this.recipeRepository.update(id, {
+        //     ...updateRecipeDto,
+        // });
+
+        // return {
+        //     // ...recipe,
+        //     ...updateRecipeDto,
+        // };
+
+        // Catalogs
+        if (updateRecipeDto.catalogs) {
+            updateRecipeDto.catalogs = await Promise.all(
+                updateRecipeDto.catalogs.map((catalog) =>
+                    this.catalogRepository.findOne({
+                        where: { id: catalog.id },
+                    }),
+                ),
+            );
+        }
+
+        return this.recipeRepository.update(id, {
             ...updateRecipeDto,
         });
-
-        return {
-            ...recipe,
-            ...updateRecipeDto,
-        };
     }
 
     async delete(id: string) {
