@@ -112,8 +112,7 @@
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
-      "eslint src/",
-      "prettier -w src"
+      "eslint"
     ]
   }
 }

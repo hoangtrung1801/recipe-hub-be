@@ -37,13 +37,8 @@ export default class Ingredient {
     @ApiProperty()
     amount: number;
 
-    @Column({
-        type: 'enum',
-        enum: IngredientUnit,
-    })
-    @IsEnum(IngredientUnit)
-    @ApiProperty({
-        enum: IngredientUnit,
-    })
-    unit: IngredientUnit;
+    @Column()
+    @IsString()
+    @ApiProperty()
+    unit: string;
 }
