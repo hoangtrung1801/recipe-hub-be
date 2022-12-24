@@ -24,10 +24,10 @@ import { UserModule } from './modules/user/user.module';
         }),
         DatabaseModule,
         UserModule,
-        AuthModule,
         RecipeModule,
         CatalogModule,
         UploadModule,
+        AuthModule,
     ],
     controllers: [AppController],
     providers: [

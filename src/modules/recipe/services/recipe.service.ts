@@ -51,6 +51,10 @@ export class RecipeService {
             order: {
                 createdAt: 'ASC',
             },
+            relations: {
+                cookTime: true,
+                user: true,
+            },
         });
         return recipes;
     }
@@ -262,7 +266,9 @@ export class RecipeService {
                 id: recipe.id,
             },
             imageUrl: recipe.imageUrl,
-            user,
+            user: {
+                id: user.id,
+            },
             ...forkRecipeDto,
         });
 

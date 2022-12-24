@@ -18,7 +18,7 @@ const defaultConnection = (config: ConfigService): TypeOrmModuleOptions =>
               entities: [__dirname + '/../**/*.entity{.ts,.js}'],
               synchronize: config.get('database.synchronize'),
               migrations: ['src/database/migrations/*.ts'],
-              logger: new DatabaseLogger(),
+              //   logger: new DatabaseLogger(),
           }
         : {
               type: 'mysql',
@@ -30,7 +30,7 @@ const defaultConnection = (config: ConfigService): TypeOrmModuleOptions =>
               entities: [__dirname + '/../**/*.entity{.ts,.js}'],
               synchronize: config.get('database.synchronize'),
               migrations: ['src/database/migrations/*.ts'],
-              logger: new DatabaseLogger(),
+              //   logger: new DatabaseLogger(),
           };
 
 export default defaultConnection;

@@ -39,6 +39,7 @@ export class UserService {
                 stars: true,
                 recipes: {
                     forkFrom: true,
+                    cookTime: true,
                 },
             },
         });
@@ -68,9 +69,12 @@ export class UserService {
             },
             relations: {
                 stars: true,
-                recipes: true,
+                recipes: {
+                    cookTime: true,
+                },
             },
         });
+
         return user || null;
     }
 

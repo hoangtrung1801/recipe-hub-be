@@ -7,10 +7,10 @@ import {
     Param,
     Post,
     Put,
+    Query,
     Req,
     SerializeOptions,
     UseInterceptors,
-    Query,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -20,6 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { Public } from 'src/common/decorators/public.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import RecipeMode from 'src/common/dto/recipe-mode.enum';
 import { RequestWithUser } from 'src/common/dto/request-with-user.dto';
 import Role from 'src/common/enums/role.enum';
 import { ForkRecipeDto } from './dto/request/fork-recipe.dto';
@@ -57,8 +58,18 @@ export class RecipeController {
     //     type: [Recipe],
     //     description: 'Return all recipes',
     // })
-    findAll(@Query('q') q: string, @Query('c') c: string) {
-        return this.recipeService.findAll(q, c);
+    async findAll(
+        @Req() req: RequestWithUser,
+        @Query('q') q: string,
+        @Query('c') c: string,
+    ) {
+        let recipes = await this.recipeService.findAll(q, c);
+        recipes = recipes.filter((recipe) => {
+            if (recipe.mode === RecipeMode.Public) return true;
+            if (req?.user && recipe.user.id === req.user.id) return true;
+            return false;
+        });
+        return recipes;
     }
 
     @Get(':id')

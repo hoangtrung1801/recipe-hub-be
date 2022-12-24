@@ -11,6 +11,10 @@ import { RecipeService } from './services/recipe.service';
 import Comment from './entities/comment.entity';
 import Changelog from './entities/changelog.entity';
 import Catalog from '../catalog/entities/catalog.entity';
+import { UserModule } from '../user/user.module';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import constants from 'src/common/constants';
 
 @Module({
     imports: [
@@ -25,6 +29,14 @@ import Catalog from '../catalog/entities/catalog.entity';
             Changelog,
             Catalog,
         ]),
+        UserModule,
+        PassportModule,
+        JwtModule.register({
+            signOptions: {
+                expiresIn: '1d',
+            },
+            secret: constants.secretKey,
+        }),
     ],
     controllers: [RecipeController],
     providers: [RecipeService],
